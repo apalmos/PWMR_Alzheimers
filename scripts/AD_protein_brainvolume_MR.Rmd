@@ -1,0 +1,1854 @@
+---
+title: "Brain_vol_markers"
+author: "Alish Palmos"
+date: "27/08/2021"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r echo=FALSE}
+rm(list=ls())
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR//protein_brainvol_MR/")
+```
+
+```{r include=FALSE}
+library(data.table)
+library(jtools)
+library(knitr)
+library(broom)
+library(sandwich)
+library(tidyverse)
+library(ggplot2)
+library(sgof)
+library(TwoSampleMR)
+library(qvalue)
+library(kableExtra)
+
+```
+
+```{r}
+find_lost = FALSE
+```
+
+
+# FORWARD ANALYSIS AD->PROTEIN->BRAIN
+
+# Read in all the studies 
+
+##SUN
+
+```{r echo=FALSE}
+
+#SUN
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sun/output/")
+
+sun_list <- list.files(pattern = "*.gsmr")
+
+sun_mr = lapply(sun_list, read.delim)
+
+n <- 1
+
+rm(sun_df)
+sun_df<-data.frame()
+
+for(n in 1:length(sun_mr)){
+  
+  df <- as.data.frame(sun_mr[n]) 
+  
+  df$file_name <- paste(sun_list[n])
+  
+  temp <- df
+  
+  sun_df <- rbind(sun_df, temp)
+  
+}
+
+sun_mr <- sun_df
+
+sun_mr$study <- "Sun"
+
+sun_mr <- sun_mr %>%
+  filter(nsnp >= 1)
+
+# sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
+# sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
+# sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
+# sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
+# 
+# sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
+# sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
+# sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
+# sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
+
+sun_n <- count(sun_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues 
+worked = data.frame()
+worked <- unique(sun_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sun/list.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sun/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+
+
+```
+
+##SUHRE
+
+```{r echo=FALSE}
+
+#SUHRE
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/suhre/output/")
+
+suhre_list <- list.files(pattern = "*.gsmr")
+
+suhre_mr = lapply(suhre_list, read.delim)
+
+n <- 1
+
+rm(suhre_df)
+suhre_df<-data.frame()
+
+for(n in 1:length(suhre_mr)){
+  
+  df <- as.data.frame(suhre_mr[n]) 
+  
+  df$file_name <- paste(suhre_list[n])
+  
+  temp <- df
+  
+  suhre_df <- rbind(suhre_df, temp)
+  
+}
+
+suhre_mr <- suhre_df
+
+suhre_mr$study <- "Suhre"
+
+suhre_mr <- suhre_mr %>%
+  filter(nsnp >= 1)
+
+# suhre_mr$Exposure <- gsub("\\..*","",suhre_mr$Exposure)
+# suhre_mr$Exposure <- gsub("(.*)_.*", "\\1",suhre_mr$Exposure)
+# suhre_mr$Exposure <- gsub("(.*)_.*", "\\1",suhre_mr$Exposure)
+# suhre_mr$Exposure <- gsub("(.*)_.*", "\\1",suhre_mr$Exposure)
+# suhre_mr$Exposure <- gsub("Suhre_Renamed/", "\\1",suhre_mr$Exposure)
+
+suhre_n <- count(suhre_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues 
+worked = data.frame()
+worked <- unique(suhre_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/suhre/list.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/suhre/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+# marker <- c("SUHR1124", "SUHR302", "SUHR700", "SUHR750", "SUHR900", "SUHR923", "SUHR951")
+# name <- c("SNRPF", "F10", "F2", "DCTPP1", "HBA1_HBB", "CA1", "MAPK11")
+# 
+# re_do_2 <- cbind(marker, name)
+# as.data.frame(re_do_2)
+# write.table(x = re_do_2, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/suhre/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+
+```
+
+##FOLK 
+
+```{r echo=FALSE}
+
+#FOLK 
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/folk/output/")
+
+folk_list <- list.files(pattern = "*.gsmr")
+
+folk_mr = lapply(folk_list, read.delim)
+
+n <- 1
+
+rm(folk_df)
+folk_df<-data.frame()
+
+for(n in 1:length(folk_mr)){
+  
+  df <- as.data.frame(folk_mr[n]) 
+  
+  df$file_name <- paste(folk_list[n])
+  
+  temp <- df
+  
+  folk_df <- rbind(folk_df, temp)
+  
+}
+
+folk_mr <- folk_df
+
+folk_mr$study <- "Folk"
+
+folk_mr <- folk_mr %>%
+  filter(nsnp >= 1)
+
+folk_n <- count(folk_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues 
+worked = data.frame()
+worked <- unique(folk_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/folk/list.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/folk/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+
+
+```
+
+##WOOD
+
+```{r echo=FALSE}
+
+#WOOD
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/wood/output/")
+
+wood_list <- list.files(pattern = "*.gsmr")
+
+wood_mr = lapply(wood_list, read.delim)
+
+n <- 1
+
+rm(wood_df)
+wood_df<-data.frame()
+
+for(n in 1:length(wood_mr)){
+  
+  df <- as.data.frame(wood_mr[n]) 
+  
+  df$file_name <- paste(wood_list[n])
+  
+  temp <- df
+  
+  wood_df <- rbind(wood_df, temp)
+  
+}
+
+wood_mr <- wood_df
+
+wood_mr$study <- "Wood"
+
+wood_mr <- wood_mr %>%
+  filter(nsnp >= 1)
+
+wood_n <- count(wood_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues 
+worked = data.frame()
+worked <- unique(wood_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/wood/list.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/wood/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+
+```
+
+##AHOL 
+
+```{r echo=FALSE}
+
+#AHOL 
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/ahol/output/")
+
+ahol_list <- list.files(pattern = "*.gsmr")
+
+ahol_mr = lapply(ahol_list, read.delim)
+
+n <- 1
+
+rm(ahol_df)
+ahol_df<-data.frame()
+
+for(n in 1:length(ahol_mr)){
+  
+  df <- as.data.frame(ahol_mr[n]) 
+  
+  df$file_name <- paste(ahol_list[n])
+  
+  temp <- df
+  
+  ahol_df <- rbind(ahol_df, temp)
+  
+}
+
+ahol_mr <- ahol_df
+
+ahol_mr$study <- "Ahol"
+
+ahol_mr <- ahol_mr %>%
+  filter(nsnp >= 1)
+
+ahol_n <- count(ahol_mr)
+
+
+```
+
+##SCALLOP
+
+```{r echo=FALSE}
+
+#SCALLOP
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/scal/output/")
+
+scal_list <- list.files(pattern = "*.gsmr")
+
+scal_mr = lapply(scal_list, read.delim)
+
+n <- 1
+
+rm(scal_df)
+scal_df<-data.frame()
+
+for(n in 1:length(scal_mr)){
+  
+  df <- as.data.frame(scal_mr[n]) 
+  
+  df$file_name <- paste(scal_list[n])
+  
+  temp <- df
+  
+  scal_df <- rbind(scal_df, temp)
+  
+}
+
+scal_mr <- scal_df
+
+scal_mr$study <- "Scal"
+
+scal_mr <- scal_mr %>%
+  filter(nsnp >= 1)
+
+scal_n <- count(scal_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues 
+worked = data.frame()
+worked <- unique(scal_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/scal/list.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/scal/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+```
+
+##HILL
+
+```{r echo=FALSE}
+
+#HILL
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/hill/output/")
+
+hill_list <- list.files(pattern = "*.gsmr")
+
+hill_mr = lapply(hill_list, read.delim)
+
+n <- 1
+
+rm(hill_df)
+hill_df<-data.frame()
+
+for(n in 1:length(hill_mr)){
+  
+  df <- as.data.frame(hill_mr[n]) 
+  
+  df$file_name <- paste(hill_list[n])
+  
+  temp <- df
+  
+  hill_df <- rbind(hill_df, temp)
+  
+}
+
+hill_mr <- hill_df
+
+hill_mr$study <- "Hill"
+
+hill_mr <- hill_mr %>%
+  filter(nsnp >= 1)
+
+
+hill_n <- count(hill_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues 
+worked = data.frame()
+worked <- unique(hill_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/hill/list.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/hill/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+```
+
+##HOGL
+
+```{r echo=FALSE}
+
+#HOGL
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/hogl/output/")
+
+hogl_list <- list.files(pattern = "*.gsmr")
+
+hogl_mr = lapply(hogl_list, read.delim)
+
+n <- 1
+
+rm(hogl_df)
+hogl_df<-data.frame()
+
+for(n in 1:length(hogl_mr)){
+  
+  df <- as.data.frame(hogl_mr[n]) 
+  
+  df$file_name <- paste(hogl_list[n])
+  
+  temp <- df
+  
+  hogl_df <- rbind(hogl_df, temp)
+  
+}
+
+hogl_mr <- hogl_df
+
+hogl_mr$study <- "Hogl"
+
+hogl_mr <- hogl_mr %>%
+  filter(nsnp >= 1)
+
+hogl_n <- count(hogl_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues 
+worked = data.frame()
+worked <- unique(hogl_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/hogl/list.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/hogl/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+marker <- c("HOGL08", "HOGL103")
+name <- c("SNRPF", "TGFalpha")
+
+re_do_2 <- cbind(marker, name)
+as.data.frame(re_do_2)
+write.table(x = re_do_2, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/hogl/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+
+```
+
+##ENROTH
+
+```{r echo=FALSE}
+
+#ENROTH
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/enroth/output/")
+
+enroth_list <- list.files(pattern = "*.gsmr")
+
+enroth_mr = lapply(enroth_list, read.delim)
+
+n <- 1
+
+rm(enroth_df)
+enroth_df<-data.frame()
+
+for(n in 1:length(enroth_mr)){
+  
+  df <- as.data.frame(enroth_mr[n]) 
+  
+  df$file_name <- paste(enroth_list[n])
+  
+  temp <- df
+  
+  enroth_df <- rbind(enroth_df, temp)
+  
+}
+
+enroth_mr <- enroth_df
+
+enroth_mr$study <- "Enroth"
+
+enroth_mr <- enroth_mr %>%
+  filter(nsnp >= 1)
+
+enroth_n <- count(enroth_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues 
+worked = data.frame()
+worked <- unique(enroth_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/enroth/list.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/enroth/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+
+```
+
+# Count the number of analyses
+```{r echo=FALSE}
+total_tests <- sum(ahol_n$n, folk_n$n, scal_n$n, suhre_n$n, sun_n$n, wood_n$n, hill_n$n, hogl_n$n, enroth_n$n)
+
+threshold <- 0.05/total_tests
+
+threshold <- format(threshold,scientific=FALSE)
+
+print(threshold)
+```
+
+# Combine all
+```{r echo=FALSE}
+
+# combine all to count how many exposures and outcomes we had
+mr_df_all <- rbind(folk_mr, suhre_mr, sun_mr, wood_mr, ahol_mr, scal_mr, hill_mr, hogl_mr, enroth_mr)
+
+```
+
+# Combine all to get proteins as exposures
+```{r}
+protein_outcome <- mr_df_all %>%
+  filter(!(str_detect(Outcome, "\\d")))
+
+  protein_outcome %>%
+  kbl() %>%
+  kable_classic_2(full_width = F)
+  
+```
+
+# Combine full data, work out odds ratios and 95% CI
+```{r}
+
+protein_outcome$Beta_exponent <- exp(protein_outcome$bxy)
+protein_outcome$LCI <- protein_outcome$bxy - (protein_outcome$se * 1.96)
+protein_outcome$UCI <- protein_outcome$bxy + (protein_outcome$se * 1.96)
+
+protein_outcome$Exposure <- gsub(".txt", "",protein_outcome$Exposure)
+protein_outcome$Outcome <- gsub(".txt", "",protein_outcome$Outcome)
+
+  protein_outcome %>%
+  kbl() %>%
+  kable_classic_2(full_width = F)
+```
+
+# Compute q-values and add them to the large combined data frame
+```{r}
+pvalues <- protein_outcome$p
+qobj <- qvalue(p = pvalues)
+lfdr <- qobj$lfdr
+summary(qobj)
+hist(qobj)
+plot(qobj)
+
+qvalues <- as.matrix(qobj$qvalues)
+protein_outcome$qvalue <- cbind(qvalues)
+```
+
+# Sort by significant p-values and rename headers
+```{r}
+mr_df_filtered <- protein_outcome %>%
+  filter(qvalue < 0.05) 
+
+mr_df_filtered <- mr_df_filtered %>%
+  rename(Beta = bxy, StandardError = se, Pvalue = p, SNPs = nsnp, LowerCI = LCI, UpperCI =  UCI, AdjustedPvalue = qvalue)
+
+mr_df_filtered <- mr_df_filtered %>% arrange(desc(Beta_exponent))
+     
+# mr_df_filtered$Log_Beta <- log(mr_df_filtered$Beta_exponent) 
+# mr_df_filtered$Log_LowerCI <- log(mr_df_filtered$LCI) 
+# mr_df_filtered$Log_UpperCI <- log(mr_df_filtered$UCI) 
+
+# mr_df_filtered$Exposure <- make.names(mr_df_filtered$Exposure,unique=T)
+# mr_df_filtered$Outcome <- make.names(mr_df_filtered$Outcome,unique=T)
+
+                                        
+  mr_df_filtered %>%
+  kbl() %>%
+  kable_classic_2(full_width = F)
+
+mr_df_filtered$file_name <-   gsub("\\..*","",mr_df_filtered$file_name)
+
+mr_df_filtered$marker_name <- paste(mr_df_filtered$file_name, mr_df_filtered$study, sep="_")
+
+# mr_df_filtered <- mr_df_filtered[!duplicated(mr_df_filtered$Exposure), ]
+# 
+mr_df_filtered <- mr_df_filtered[!duplicated(mr_df_filtered[c(7,2)]),]
+
+```
+
+##Figure
+```{r fig.width=20, fig.height=40, echo=FALSE}
+
+library(scales)
+
+protein_outcome_filtered <- mr_df_filtered %>%
+  filter(AdjustedPvalue < 0.05) 
+
+AD_prot_brain <- ggplot(protein_outcome_filtered, aes(x=reorder(as.factor(Exposure), Beta) , y=Beta)) + 
+    geom_boxplot(fill="slateblue") + coord_flip() + geom_errorbar(aes(ymax = UpperCI, ymin = LowerCI))+ ggtitle("Alzheimer's -> Proteins -> Brain Volumes MR") +
+  xlab("Exposure Variable") + ylab("Odds Ratio (95% Confidence Interval)")+ geom_hline(yintercept=0, linetype="dashed", color = "red") + 
+  theme_bw() + theme(text=element_text(size=25, family="Arial")) +
+    facet_wrap(~Outcome, scale="free") +
+  geom_hline(linetype = "dashed", yintercept = 0) +
+  guides(color = guide_legend(reverse = TRUE)) +
+  theme(text=element_text(size=10))
+  
+AD_prot_brain
+
+# ggsave(path = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/", filename = "AD_prot_brain_plot", plot = AD_prot_brain, device='tiff', dpi=300)
+
+```
+
+# DO THE REVERSE PROTEIN->AD->BRAIN
+
+# Read in all the studies 
+
+##SUN
+
+```{r echo=FALSE}
+
+#SUN
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sun/output/")
+
+sun_list <- list.files(pattern = "*.gsmr")
+
+sun_mr = lapply(sun_list, read.delim)
+
+n <- 1
+
+rm(sun_df)
+sun_df<-data.frame()
+
+for(n in 1:length(sun_mr)){
+  
+  df <- as.data.frame(sun_mr[n]) 
+  
+  df$file_name <- paste(sun_list[n])
+  
+  temp <- df
+  
+  sun_df <- rbind(sun_df, temp)
+  
+}
+
+sun_mr <- sun_df
+
+sun_mr$study <- "Sun"
+
+sun_mr <- sun_mr %>%
+  filter(nsnp >= 1)
+
+# sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
+# sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
+# sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
+# sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
+# 
+# sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
+# sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
+# sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
+# sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
+
+sun_n <- count(sun_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues 
+worked = data.frame()
+worked <- unique(sun_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD//sun/list.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sun/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+}
+
+
+```
+
+##SUHRE
+
+```{r echo=FALSE}
+
+#SUHRE
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/suhre/output/")
+
+
+suhre_list <- list.files(pattern = "*.gsmr")
+
+suhre_mr = lapply(suhre_list, read.delim)
+
+n <- 1
+
+rm(suhre_df)
+suhre_df<-data.frame()
+
+for(n in 1:length(suhre_mr)){
+  
+  df <- as.data.frame(suhre_mr[n]) 
+  
+  df$file_name <- paste(suhre_list[n])
+  
+  temp <- df
+  
+  suhre_df <- rbind(suhre_df, temp)
+  
+}
+
+suhre_mr <- suhre_df
+
+suhre_mr$study <- "Suhre"
+
+suhre_mr <- suhre_mr %>%
+  filter(nsnp >= 1)
+
+# suhre_mr$Exposure <- gsub("\\..*","",suhre_mr$Exposure)
+# suhre_mr$Exposure <- gsub("(.*)_.*", "\\1",suhre_mr$Exposure)
+# suhre_mr$Exposure <- gsub("(.*)_.*", "\\1",suhre_mr$Exposure)
+# suhre_mr$Exposure <- gsub("(.*)_.*", "\\1",suhre_mr$Exposure)
+# suhre_mr$Exposure <- gsub("Suhre_Renamed/", "\\1",suhre_mr$Exposure)
+
+
+suhre_n <- count(suhre_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues 
+worked = data.frame()
+worked <- unique(suhre_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/suhre/list.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/suhre/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+}
+
+# marker <- c("SUHR1003", "SUHR1124", "SUHR316", "SUHR723", "SUHR800", "SUHR91", "SUHR987")
+# name <- c("LILRB2", "SNRPF", "CD33", "IL1RL1", "C4A_C4B", "STC1", "CD55")
+# 
+# re_do_2 <- cbind(marker, name)
+# as.data.frame(re_do_2)
+# write.table(x = re_do_2, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/suhre/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+
+```
+
+##FOLK 
+
+```{r echo=FALSE}
+
+#FOLK 
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/folk/output/")
+
+folk_list <- list.files(pattern = "*.gsmr")
+
+folk_mr = lapply(folk_list, read.delim)
+
+n <- 1
+
+rm(folk_df)
+folk_df<-data.frame()
+
+for(n in 1:length(folk_mr)){
+  
+  df <- as.data.frame(folk_mr[n]) 
+  
+  df$file_name <- paste(folk_list[n])
+  
+  temp <- df
+  
+  folk_df <- rbind(folk_df, temp)
+  
+}
+
+folk_mr <- folk_df
+
+folk_mr$study <- "Folk"
+
+folk_mr <- folk_mr %>%
+  filter(nsnp >= 1)
+
+folk_n <- count(folk_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues 
+worked = data.frame()
+worked <- unique(folk_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/folk/list.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/folk/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+}
+
+```
+
+##WOOD
+
+```{r echo=FALSE}
+
+#WOOD
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/wood/output/")
+
+wood_list <- list.files(pattern = "*.gsmr")
+
+wood_mr = lapply(wood_list, read.delim)
+
+n <- 1
+
+rm(wood_df)
+wood_df<-data.frame()
+
+for(n in 1:length(wood_mr)){
+  
+  df <- as.data.frame(wood_mr[n]) 
+  
+  df$file_name <- paste(wood_list[n])
+  
+  temp <- df
+  
+  wood_df <- rbind(wood_df, temp)
+  
+}
+
+wood_mr <- wood_df
+
+wood_mr$study <- "Wood"
+
+wood_mr <- wood_mr %>%
+  filter(nsnp >= 1)
+
+wood_n <- count(wood_mr)
+
+
+```
+
+##SCALLOP
+
+```{r echo=FALSE}
+
+#SCALLOP
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/scal/output/")
+
+scal_list <- list.files(pattern = "*.gsmr")
+
+scal_mr = lapply(scal_list, read.delim)
+
+n <- 1
+
+rm(scal_df)
+scal_df<-data.frame()
+
+for(n in 1:length(scal_mr)){
+  
+  df <- as.data.frame(scal_mr[n]) 
+  
+  df$file_name <- paste(scal_list[n])
+  
+  temp <- df
+  
+  scal_df <- rbind(scal_df, temp)
+  
+}
+
+scal_mr <- scal_df
+
+scal_mr$study <- "Scal"
+
+scal_mr <- scal_mr %>%
+  filter(nsnp >= 1)
+
+scal_n <- count(scal_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues 
+worked = data.frame()
+worked <- unique(scal_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/scal/list.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/scal/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+}
+
+```
+
+##ENROTH
+
+```{r echo=FALSE}
+
+#SCALLOP
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/enroth//output/")
+
+enroth_list <- list.files(pattern = "*.gsmr")
+
+enroth_mr = lapply(enroth_list, read.delim)
+
+n <- 1
+
+rm(enroth_df)
+enroth_df<-data.frame()
+
+for(n in 1:length(enroth_mr)){
+  
+  df <- as.data.frame(enroth_mr[n]) 
+  
+  df$file_name <- paste(enroth_list[n])
+  
+  temp <- df
+  
+  enroth_df <- rbind(enroth_df, temp)
+  
+}
+
+enroth_mr <- enroth_df
+
+enroth_mr$study <- "Enroth"
+
+enroth_mr <- enroth_mr %>%
+  filter(nsnp >= 1)
+
+enroth_n <- count(enroth_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues 
+worked = data.frame()
+worked <- unique(enroth_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/enroth/list.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/enroth/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+}
+
+```
+
+# Count the number of anlayses
+```{r echo=FALSE}
+total_tests <- sum(folk_n$n, scal_n$n, suhre_n$n, sun_n$n, wood_n$n, enroth_n$n)
+
+threshold <- 0.05/total_tests
+
+threshold <- format(threshold,scientific=FALSE)
+
+print(threshold)
+```
+
+
+# Combine all 
+```{r echo=FALSE}
+
+# combine all to count how many exposures and outcomes we had
+mr_df_all <- rbind(folk_mr, suhre_mr, sun_mr, wood_mr, scal_mr, enroth_mr)
+```
+
+
+# Combine full data, work out odds ratios and 95% CI
+```{r}
+
+mr_df_all$Beta_exponent <- exp(mr_df_all$bxy)
+mr_df_all$LCI <- mr_df_all$Beta_exponent - (mr_df_all$se * 1.96)
+mr_df_all$UCI <- mr_df_all$Beta_exponent + (mr_df_all$se * 1.96)
+
+mr_df_all$Exposure <- gsub(".txt", "",mr_df_all$Exposure)
+mr_df_all$Outcome <- gsub(".txt", "",mr_df_all$Outcome)
+```
+
+# Compute q-values and add them to the large combined data frame
+```{r}
+pvalues <- mr_df_all$p
+qobj <- qvalue(p = pvalues)
+lfdr <- qobj$lfdr
+summary(qobj)
+hist(qobj)
+plot(qobj)
+
+qvalues <- as.matrix(qobj$qvalues)
+mr_df_all$qvalue <- cbind(qvalues)
+```
+
+
+# Adjusted p-values using SGoF method
+```{r}
+p <- SGoF(mr_df_all$p)
+summary(p)
+
+plot(p)
+
+p_list <- p$Adjusted.pvalues
+
+mr_df_all <- mr_df_all[order(mr_df_all$p),]
+mr_df_all$sgof <- p_list
+```
+
+# Adjusted p-values to be inclued in the data frame & sorted by p-value
+```{r}
+mr_df_all$p.adjust <- p.adjust(p = mr_df_all$p, method = "fdr")
+
+```
+
+# Combine all to count protein exposures
+```{r}
+protin_exposure <- mr_df_all %>%
+  filter(!(str_detect(Outcome, "\\d")))
+
+```
+
+# Combine full data, work out odds ratios and 95% CI
+```{r}
+
+protin_exposure$Beta_exponent <- exp(protin_exposure$bxy)
+protin_exposure$LCI <- protin_exposure$bxy - (protin_exposure$se * 1.96)
+protin_exposure$UCI <- protin_exposure$bxy + (protin_exposure$se * 1.96)
+
+protin_exposure$Exposure <- gsub(".txt", "",protin_exposure$Exposure)
+protin_exposure$Outcome <- gsub(".txt", "",protin_exposure$Outcome)
+
+  protin_exposure %>%
+  kbl() %>%
+  kable_classic_2(full_width = F)
+```
+
+# Compute q-values and add them to the large combined data frame
+```{r}
+pvalues <- protin_exposure$p
+qobj <- qvalue(p = pvalues)
+lfdr <- qobj$lfdr
+summary(qobj)
+hist(qobj)
+plot(qobj)
+
+qvalues <- as.matrix(qobj$qvalues)
+protin_exposure$qvalue <- cbind(qvalues)
+```
+
+# Sort by significant p-values and rename headers
+```{r}
+mr_df_filtered <- protin_exposure %>%
+  filter(qvalue < 0.05) 
+
+mr_df_filtered <- mr_df_filtered %>%
+  rename(Beta = bxy, StandardError = se, Pvalue = p, SNPs = nsnp, LowerCI = LCI, UpperCI =  UCI, AdjustedPvalue = qvalue)
+
+mr_df_filtered <- mr_df_filtered %>% arrange(desc(Beta_exponent))
+     
+# mr_df_filtered$Log_Beta <- log(mr_df_filtered$Beta_exponent) 
+# mr_df_filtered$Log_LowerCI <- log(mr_df_filtered$LowerCI) 
+# mr_df_filtered$Log_UpperCI <- log(mr_df_filtered$UpperCI) 
+
+# mr_df_filtered$Exposure <- make.names(mr_df_filtered$Exposure,unique=T)
+# mr_df_filtered$Outcome <- make.names(mr_df_filtered$Outcome,unique=T)
+
+mr_df_filtered$file_name <-   gsub("\\..*","",mr_df_filtered$file_name)
+
+mr_df_filtered$marker_name <- paste(mr_df_filtered$file_name, mr_df_filtered$study, sep="_")
+
+  mr_df_filtered %>%
+  kbl() %>%
+  kable_classic_2(full_width = F)
+
+```
+
+##Figure
+```{r fig.width=20, fig.height=40, echo=FALSE}
+
+library(scales)
+
+protein_exposure_filtered <- mr_df_filtered %>%
+  filter(AdjustedPvalue < 0.05) 
+
+protein_AD_brain <- ggplot(protein_exposure_filtered, aes(x=reorder(as.factor(Exposure), Beta) , y=Beta)) + 
+    geom_boxplot(fill="slateblue") + coord_flip() + geom_errorbar(aes(ymax = UpperCI, ymin = LowerCI))+ ggtitle("Proteins -> Alzheimer's -> Brain Volumes MR") +
+  xlab("Exposure Variable") + ylab("Odds Ratio (95% Confidence Interval)")+ geom_hline(yintercept=0, linetype="dashed", color = "red") + 
+  theme_bw() + theme(text=element_text(size=25, family="Arial")) +
+    facet_wrap(~Outcome, scale="free") +
+  geom_hline(linetype = "dashed", yintercept = 0) +
+  guides(color = guide_legend(reverse = TRUE)) +
+  theme(text=element_text(size=10))
+
+protein_AD_brain
+  
+# ggsave(path = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD//", filename = "protein_AD_brain_plot", plot = protein_AD_brain, device='tiff', dpi=300)
+ 
+```
+
+
+# Functions to get SNP infro from GSMR
+```{r GSMR fucntions for creating figures, no need to take note of this}
+
+# ************************************************** #
+#              Read exposure and outcome             #
+# ************************************************** #
+read_gsmr_trait = function(file_con) {
+    expo_str = scan(file_con, nlines=1, quiet=TRUE, what="");
+    outcome_str = scan(file_con, nlines=1, quiet=TRUE, what="");
+    strbuf = scan(file_con, nlines=1, quiet=TRUE, what="");
+    return(list(expo_str=expo_str, outcome_str=outcome_str))
+}
+
+# ************************************************** #
+#                  Read GSMR result                  #
+# ************************************************** #
+read_gsmr_result = function(file_con) {
+    expo_str = outcome_str = bxy = bxy_se = bxy_pval = bxy_m = c()
+    while(1) {
+        strbuf = scan(file_con, nlines=1, quiet=TRUE, what="");
+        if(strbuf[1] == "#gsmr_end") break;
+        if(strbuf[1] == "Exposure") next;
+        expo_str = c(expo_str, strbuf[1]);
+        outcome_str = c(outcome_str, strbuf[2]);
+        bxy = c(bxy, as.numeric(strbuf[3]));
+        bxy_se = c(bxy_se, as.numeric(strbuf[4]));
+        bxy_pval = c(bxy_pval, as.numeric(strbuf[5]));
+        bxy_m = c(bxy_m, as.numeric(strbuf[6]));
+    }
+    return(cbind(expo_str, outcome_str, bxy, bxy_se, bxy_pval, bxy_m))
+}
+
+# ************************************************** #
+#                  Read SNP effects                  #
+# ************************************************** #
+read_snp_effect = function(file_con) {
+    snp_effect = c()
+    while(1) {
+        strbuf = scan(file_con, nlines=1, quiet=TRUE, what="");
+        if(strbuf[1] == "#effect_end") break;
+        snp_effect = rbind(snp_effect, strbuf);
+        print(length(strbuf))
+        if(length(strbuf)<14) print(strbuf)
+    }
+    return(snp_effect)
+}
+
+# ************************************************** #
+#                  Read SNP instruments              #
+# ************************************************** #
+read_snp_instru = function(file_con, snplist, nexpo, noutcome) {
+    nrow = length(snplist); ncol = nexpo+noutcome
+    snp_instru = matrix(NA, nrow, ncol)
+    while(1) {
+        strbuf = scan(file_con, nlines=1, quiet=TRUE, what="");
+        if(strbuf[1] == "#marker_end") break;
+        expo_indx = as.numeric(strbuf[1]); outcome_indx = as.numeric(strbuf[2]);
+        forward_flag = TRUE;
+        if(expo_indx < outcome_indx) {
+            outcome_indx = outcome_indx - nexpo
+        } else {
+            expo_indx = expo_indx - nexpo
+            forward_flag = FALSE;
+        }
+        snpbuf = scan(file_con, nlines=1, quiet=TRUE, what="");
+        snp_indx = match(snpbuf, snplist)
+        posbuf = rep(0, nrow); posbuf[snp_indx] = 1;
+        indxbuf = expo_indx
+        if(!forward_flag) indxbuf = indxbuf + nexpo
+        if(length(which(!is.na(snp_instru[,indxbuf])))==0) {
+            snp_instru[,indxbuf] = posbuf;
+        } else {
+            snp_instru[,indxbuf] = paste(snp_instru[,indxbuf], posbuf, sep="")
+        }
+    }
+    return(snp_instru)
+}
+
+# ************************************************** #
+#          Read output by GCTA-GSMR for plot         #
+# ************************************************** #
+read_gsmr_data = function(gsmr_effect_file) {
+    trait_flag = gsmr_flag = marker_flag = effect_flag = FALSE;
+    file_con = file(gsmr_effect_file, "r")
+    while(1) {
+        strbuf = scan(file_con, nlines=1, quiet=TRUE, what="");
+        if(strbuf == "#trait_begin") {
+            # Read the exposures and outcomes
+            resbuf = read_gsmr_trait(file_con);
+            expo_str = resbuf$expo_str; 
+            outcome_str = resbuf$outcome_str;
+            pheno_str = c(expo_str, outcome_str);
+            nexpo = length(expo_str); noutcome = length(outcome_str)
+            trait_flag = TRUE;
+        } else if(strbuf == "#gsmr_begin") {
+            # Read the GSMR result
+            bxy_result = read_gsmr_result(file_con);
+            colnames(bxy_result) = c("Exposure", "Outcome", "bxy", "se", "p", "n_snps")
+            gsmr_flag = TRUE;
+        } else if(strbuf == "#effect_begin") {
+            # Read the summary statistics
+            snp_effect = read_snp_effect(file_con);
+            snplist = as.character(snp_effect[,1])
+            effect_flag = TRUE;
+        } else if(strbuf == "#marker_begin") {
+            # Read the SNPs
+            snp_instru = read_snp_instru(file_con, snplist, nexpo, noutcome);
+            snp_effect = cbind(snp_effect[,1], snp_instru, snp_effect[,-1])
+            marker_flag = TRUE;
+        }
+        if(trait_flag==T & gsmr_flag==T & marker_flag==T & effect_flag==T) break;
+    }
+    return(list(pheno=c(nexpo, noutcome, pheno_str), bxy_result=bxy_result, snp_effect = snp_effect))
+}
+
+# ************************************************** #
+#         Display summary of the gsmr data           #
+# ************************************************** #
+gsmr_summary = function(gsmr_data) {
+    message("\n## Exposure and outcome")
+    pheno_str = gsmr_data$pheno[c(-1,-2)]
+    # exposure
+    nexpo = as.numeric(gsmr_data$pheno[1]);
+    noutcome = as.numeric(gsmr_data$pheno[2]);
+    logger_m = paste(nexpo, "exposure(s):");
+    logger_m = paste(logger_m, gsmr_data$pheno[3])
+    if(nexpo > 1) {
+        for(i in 2 : nexpo) 
+            logger_m = paste(logger_m, gsmr_data$pheno[i+2], sep=", ")
+    } 
+    message(logger_m)
+    # outcome
+    logger_m = paste(noutcome, "outcome(s):");
+    logger_m = paste(logger_m, gsmr_data$pheno[3+nexpo])
+    if(noutcome > 1) {
+        for(i in 2 : noutcome) 
+            logger_m = paste(logger_m, gsmr_data$pheno[i+2+nexpo], sep=", ")
+    } 
+    message(logger_m)
+
+    message("\n## GSMR result")
+    m_bxy_rst = data.frame(gsmr_data$bxy_result)
+    print(m_bxy_rst)
+}
+
+
+# ************************************************** #
+#               Retrieve SNP effects                 #
+# ************************************************** #
+gsmr_snp_effect = function(gsmr_data, expo_str, outcome_str) {
+   # index of SNP instruments
+    pheno_str = as.character(gsmr_data$pheno[c(-1,-2)])
+    nexpo = as.numeric(gsmr_data$pheno[1])
+    noutcome = as.numeric(gsmr_data$pheno[2])
+    expo_indx = match(expo_str, pheno_str)
+    if(is.na(expo_indx)) stop("\"", expo_str, "\" is not found.")
+    outcome_indx = match(outcome_str, pheno_str)
+    if(is.na(outcome_indx)) stop("\"", outcome_str, "\" is not found.")
+    forward_flag = TRUE;
+    if(expo_indx > outcome_indx) forward_flag = FALSE;
+    if(forward_flag) {
+        outcome_indx = outcome_indx - nexpo;
+    } else {
+        expo_indx = expo_indx - nexpo;
+    }
+    indxbuf = expo_indx + 1
+    if(!forward_flag) indxbuf = indxbuf + nexpo
+    strbuf = as.character(substr(gsmr_data$snp_effect[,indxbuf], outcome_indx, outcome_indx))
+    snpindx = which(strbuf=="1")
+    if(length(snpindx) < 1) stop("Not enough SNPs retained.")
+    # bxy
+    indxbuf = which(gsmr_data$bxy_result[,1]==expo_str & gsmr_data$bxy_result[,2]==outcome_str)
+    bxy = as.numeric(gsmr_data$bxy_result[indxbuf, 3])
+    # SNP effects
+    if(forward_flag) {
+        indxbuf1 = 1 + nexpo + noutcome + 3 + (expo_indx-1)*2 + 1
+        indxbuf2 = 1 + nexpo + noutcome + 3 + nexpo*2 + (outcome_indx-1)*2 + 1
+    } else {
+        indxbuf1 = 1 + nexpo + noutcome + 3 + nexpo*2 + (expo_indx-1)*2 + 1
+        indxbuf2 = 1 + nexpo + noutcome + 3 + (outcome_indx-1)*2 + 1
+    }
+    snpid = as.character(gsmr_data$snp_effect[snpindx,1])
+    bzx = as.numeric(gsmr_data$snp_effect[snpindx,indxbuf1]); indxbuf1 = indxbuf1 + 1;
+    bzx_se = as.numeric(gsmr_data$snp_effect[snpindx,indxbuf1]);
+    bzx_pval = pchisq((bzx/bzx_se)^2, 1, lower.tail=F);
+    bzy = as.numeric(gsmr_data$snp_effect[snpindx,indxbuf2]); indxbuf2 = indxbuf2 + 1;
+    bzy_se = as.numeric(gsmr_data$snp_effect[snpindx,indxbuf2]);
+    bzy_pval = pchisq((bzy/bzy_se)^2, 1, lower.tail=F);
+    return(list(snp=snpid, bxy=bxy, bzx=bzx, bzx_se=bzx_se, bzx_pval=bzx_pval, bzy=bzy, bzy_se=bzy_se, bzy_pval=bzy_pval))
+}
+
+# ************************************************** #
+#                  Plot bzy vs bzx                   #
+# ************************************************** #
+plot_snp_effect = function(expo_str, outcome_str, bxy, bzx, bzx_se, bzy, bzy_se, effect_col=colors()[75]) {
+    vals = c(bzx-bzx_se, bzx+bzx_se)
+    xmin = min(vals); xmax = max(vals)
+    vals = c(bzy-bzy_se, bzy+bzy_se)
+    ymin = min(vals); ymax = max(vals)
+    plot(bzx, bzy, pch=20, cex=0.8, bty="n", cex.axis=1.1, cex.lab=1.2,
+         col=effect_col, xlim=c(xmin, xmax), ylim=c(ymin, ymax),
+         xlab=substitute(paste(trait, " (", italic(b[zx]), ")", sep=""), list(trait=expo_str)),
+         ylab=substitute(paste(trait, " (", italic(b[zy]), ")", sep=""), list(trait=outcome_str))
+    )
+    if(!is.na(bxy)) abline(0, bxy, lwd=1.5, lty=2, col="dim grey")
+    ## Standard errors
+    nsnps = length(bzx)
+    for( i in 1:nsnps ) {
+        # x axis
+        xstart = bzx[i] - bzx_se[i]; xend = bzx[i] + bzx_se[i]
+        ystart = bzy[i]; yend = bzy[i]
+        segments(xstart, ystart, xend, yend, lwd=1.5, col=effect_col)
+        # y axis
+        xstart = bzx[i]; xend = bzx[i] 
+        ystart = bzy[i] - bzy_se[i]; yend = bzy[i] + bzy_se[i]
+        segments(xstart, ystart, xend, yend, lwd=1.5, col=effect_col)
+        
+        
+    }
+    
+    p1_recorded <- recordPlot()
+ggdraw(p1_recorded)
+    
+}
+
+# ************************************************** #
+#             Plot bzy_pval vs bzx_pval              #
+# ************************************************** #
+plot_snp_pval = function(expo_str, outcome_str, bzx_pval, bzy_pval, gwas_thresh, truncation, effect_col) {
+    eps = 1e-300; truncation = -log10(truncation);
+    if(truncation > 300) {
+        warning("The minimal truncated p-value would be 1e-300.")
+        truncation = 300
+    }
+    bzx_pval = -log10(bzx_pval + eps);
+    bzy_pval = -log10(bzy_pval + eps);
+    pval = c(bzx_pval, bzy_pval)
+    min_val = 0; max_val = max(pval);
+    max_val = ifelse(max_val > truncation, truncation, max_val)
+    gwas_thresh = -log10(gwas_thresh);
+    plot(bzx_pval, bzy_pval, pch=20, cex=0.8, bty="n", cex.axis=1.1, cex.lab=1.2,
+         col=effect_col, xlim=c(min_val, max_val), ylim=c(min_val, max_val),
+         xlab=substitute(paste(trait, " (", -log[10], italic(P)[zx], ")", sep=""), list(trait=expo_str)),
+         ylab=substitute(paste(trait, " (", -log[10], italic(P[zy]), ")", sep=""), list(trait=outcome_str)))
+    abline(h=gwas_thresh, lty=2, lwd=1.5, col="maroon")
+}
+
+# ************************************************** #
+#                Plot bxy vs bzx_pval                #
+# ************************************************** #
+plot_snp_bxy = function(expo_str, outcome_str, bxy, bzx_pval, effect_col) {
+    eps = 1e-300;
+    bzx_pval = -log10(bzx_pval + eps);
+    xmin = min(bxy, na.rm=T); xmax = max(bxy, na.rm=T)
+    ymin = min(bzx_pval); ymax = max(bzx_pval);
+    plot(bxy, bzx_pval, pch=20, cex=0.8, bty="n", cex.axis=1.1, cex.lab=1.2,
+         col=effect_col, xlim=c(xmin, xmax), ylim=c(ymin, ymax),
+         xlab=substitute(paste(italic(hat(b)[xy]), " (", trait1, " -> ", trait2, ")", sep=""), list(trait1=expo_str, trait2=outcome_str)),
+         ylab=substitute(paste(trait, " (", -log[10], italic(P[zx]), ")", sep=""), list(trait=expo_str)))
+}
+
+# ************************************************** #
+#                  Effect size plot                  #
+# ************************************************** #
+# expo_str, exposure
+# outcome_str, outcome
+# effect_col, plotting colour
+plot_gsmr_effect = function(gsmr_data, expo_str, outcome_str, effect_col=colors()[75]) {
+    resbuf = gsmr_snp_effect(gsmr_data, expo_str, outcome_str);
+    bxy = resbuf$bxy
+    bzx = resbuf$bzx; bzx_se = resbuf$bzx_se;
+    bzy = resbuf$bzy; bzy_se = resbuf$bzy_se;
+    # plot
+    plot_snp_effect(expo_str, outcome_str, bxy, bzx, bzx_se, bzy, bzy_se, effect_col)
+}
+
+# ************************************************** #
+#                    P-value plot                    #
+# ************************************************** #
+# expo_str, exposure
+# outcome_str, outcome
+# effect_col, plotting colour
+plot_gsmr_pvalue = function(gsmr_data, expo_str, outcome_str, gwas_thresh=5e-8, truncation=1e-50, effect_col=colors()[75]) {
+    resbuf = gsmr_snp_effect(gsmr_data, expo_str, outcome_str);
+    bzx_pval = resbuf$bzx_pval; bzy_pval = resbuf$bzy_pval;
+    # plot
+    plot_snp_pval(expo_str, outcome_str, bzx_pval, bzy_pval, gwas_thresh, truncation, effect_col)
+}
+
+# ************************************************** #
+#                     bxy distribution plot                         #
+# ************************************************** #
+
+# expo_str, exposure
+# outcome_str, outcome
+# effect_col, plotting colour
+plot_bxy_distribution = function(gsmr_data, expo_str, outcome_str, effect_col=colors()[75]) {
+    resbuf = gsmr_snp_effect(gsmr_data, expo_str, outcome_str);
+    bzx = resbuf$bzx; bzx_pval = resbuf$bzx_pval;
+    bzy = resbuf$bzy; 
+    bxy = bzy/bzx
+    # plot
+    plot_snp_bxy(expo_str, outcome_str, bxy, bzx_pval, effect_col)
+}
+
+```
+
+
+# AD -> PROTEIN -> BRAIN
+# Create a loop for getting all the GSMR data into a Google Sheet
+```{r}
+
+mr_df_original_AD <- protein_outcome_filtered %>%
+  filter(AdjustedPvalue < 0.05)
+  # arrange(aesc(qvalue))
+
+library(vroom)
+library(openxlsx)
+library(cowplot)
+
+mr_df_original_AD$study <- tolower(mr_df_original_AD$study)
+mr_df_original_AD$marker_name <- sub('\\_.*', '', mr_df_original_AD$marker_name)
+
+filename <- mr_df_original_AD$file_name
+study <- mr_df_original_AD$study
+marker <- mr_df_original_AD$Exposure
+brain <- mr_df_original_AD$Outcome
+path <- "/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/"
+
+number <- 1
+
+rm(wb)
+
+wb <- createWorkbook()
+
+for(number in 1:length(filename)){
+  
+  current_marker <- filename[number]
+
+  file_path_gsmr <- paste0(path,study[number],"/","output/",current_marker,".eff_plot.gz")
+  
+  gsmr_data <- read_gsmr_data(file_path_gsmr)
+  
+  graph <- plot_gsmr_effect(gsmr_data,marker[number],brain[number], colors()[75])
+  
+  ggsave(filename = paste0(marker[number],"_",brain[number]), plot = graph, path = paste0(path,"plots/"), width = 6, height = 4, device='tiff', dpi=700)
+
+  snp_data <- gsmr_snp_effect(gsmr_data,marker[number],brain[number])
+  
+  snp_data <- as.data.frame(snp_data)
+  
+  current_name <- substring(paste0(marker[number],"_",brain[number]), 1, 30)
+  
+  addWorksheet(wb, sheetName = paste0(current_name))
+  
+  writeData(wb, sheet = paste0(current_name), snp_data, rowNames = TRUE)
+  
+}
+
+saveWorkbook(wb, file = paste0(path,"AD_protein_brain_sig.xlsx"), overwrite = TRUE)
+
+```
+
+
+#TwoSampleMR Sensitivity Analyses
+
+```{r}
+
+mr_df_original_AD <- protein_outcome_filtered %>%
+  filter(AdjustedPvalue < 0.05)
+  # arrange(aesc(qvalue))
+
+#Read in the SNPs from the excel file 
+filename <- mr_df_original_AD$file_name
+study <- mr_df_original_AD$study
+marker <- mr_df_original_AD$Exposure
+brain <- mr_df_original_AD$Outcome
+path <- "/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/"
+all_protein <- list.files("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/plots")
+
+# Make the columns as follows:
+# SNP                 
+# beta                
+# SE                 
+# effect_allele      
+# non-effective allele 
+# p-value            
+# effect_allele freq 
+
+number <- 1
+
+library(TwoSampleMR)
+
+rm(wb)
+
+wb <- createWorkbook()
+
+for(number in 1:length(filename)){
+  
+  #read in the workbook with all our significant proteins
+  current_protein <- readWorkbook(xlsxFile = paste0(path,"AD_protein_brain_sig.xlsx"), sheet = paste0(all_protein[number]), rowNames = TRUE)
+
+  #get the SNPs of interest
+  df <- current_protein %>%
+    select(SNP = snp)
+  
+  #get the whole GWAS from the same protein
+  original_protein <- fread(paste0("/scratch/groups/ukbiobank/sumstats/cleaned/blood_biomarkers/",filename[1],".gz"), verbose = T, data.table = F, fill=TRUE)
+    
+  #join the shorter and the longer protein data together
+  full_df <-  inner_join(df, original_protein)
+  
+  #get all the columns that we need
+  full_df <- full_df %>%
+  select(SNP, BETA, SE, A1, A2, P, MAF)
+
+  #write this newly joined data frame as a table
+  write.table(full_df, file = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sensitivity/",marker[1]), col.names=T, row.names=F, quote=F,sep = "\t")
+  
+  #get the brain volume that we are interested in as well
+  original_brainvol <- fread(paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/brain_vol/",brain[1],".txt"), verbose = T, data.table = F, fill=TRUE)
+  
+  #get the columns that we need from this data frame
+  brain_df <- original_brainvol %>%
+    select(SNP = ID, BETA, SE, A1 = EA, A2 = OA, P, MAF = EAFREQ)
+  
+  #write this as a table
+  write.table(brain_df, file = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sensitivity/",brain[1]), col.names=T, row.names=F, quote=F,sep = "\t")
+
+  #using TwoSampleMR, read in the exposure of interest
+  exposure_dat <- read_exposure_data(
+  filename = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sensitivity/",marker[1]),
+  sep = "\t",                
+  snp_col = "SNP",          
+  beta_col = "BETA",         
+  se_col = "SE",        
+  effect_allele_col = "A1",  
+  other_allele_col = "A2",
+  eaf = "MAF",
+  samplesize_col = "N",
+  pval_col = "P") 
+  
+  exposure_dat$exposure=paste0(marker[1])
+  
+  #using TwoSampleMR, read in the outcome of interest
+  outcome_dat <- read_outcome_data(
+  filename = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sensitivity/",brain[1]),
+  sep = "\t",                
+  snp_col = "SNP",          
+  beta_col = "BETA",         
+  se_col = "SE",        
+  effect_allele_col = "A1",  
+  other_allele_col = "A2",
+  eaf = "MAF",
+  samplesize_col = "N",
+  pval_col = "P") 
+  
+  outcome_dat$outcome=paste0(brain[1])
+  
+  #Harmonisation of SNP instruments between exposures and outcomes 
+  harmonized <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action=2)
+  
+  # get the data ready 
+  # all exposures -> Covid
+  dataMR_keep=subset(harmonized, mr_keep==TRUE)
+  
+  # perform TwoSampleMR for all pairs
+  MR_toCovid_keep<- mr(dataMR_keep, method_list = c("mr_two_sample_ml", "mr_egger_regression","mr_weighted_median", "mr_ivw", "mr_ivw_radial", "mr_ivw_mre", "mr_ivw_fe", "mr_weighted_mode"))
+  
+  #get the name of the current marker and brain volume
+  current_name <- substring(paste0(marker[number],"_",brain[number]), 1, 30)
+  
+  #add a new sheet to the excel data frame and add the sensitivity data to this sheet
+  addWorksheet(wb, sheetName = paste0(current_name))
+
+  writeData(wb, sheet = paste0(current_name), MR_toCovid_keep, rowNames = TRUE)
+  
+  #save the results as a data frame
+  Results_MR_toCovid_keep=MR_toCovid_keep # Saves the results in dataframe
+
+  #plot the results 
+  plot = mr_scatter_plot(Results_MR_toCovid_keep, dataMR_keep)
+  
+  #just choose the plot from the list elements
+  save_plot <- plot[[1]]
+  
+  #save plot
+  ggsave(filename = paste0(marker[number],"_",brain[number]), plot = save_plot, path = paste0(path,"sensitivity/plots/"), width = 6, height = 4, device='tiff', dpi=700)
+
+}
+
+#save the entire excel workbook with all the sensitivity analyses
+saveWorkbook(wb, file = paste0(path,"sensitivity/AD_protein_brain_sensitivity.xlsx"), overwrite = TRUE)
+
+```
+
+
+# PROTEIN -> AD -> BRAIN
+# Create a loop for getting all the GSMR data into a Google Sheet
+```{r}
+
+mr_df_original_AD <- protein_exposure_filtered %>%
+  filter(AdjustedPvalue < 0.05)
+  # arrange(aesc(qvalue))
+
+library(vroom)
+library(openxlsx)
+library(cowplot)
+
+mr_df_original_AD$study <- tolower(mr_df_original_AD$study)
+mr_df_original_AD$marker_name <- sub('\\_.*', '', mr_df_original_AD$marker_name)
+
+filename <- mr_df_original_AD$file_name
+study <- mr_df_original_AD$study
+marker <- mr_df_original_AD$Exposure
+brain <- mr_df_original_AD$Outcome
+path <- "/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD//"
+
+number <- 1
+
+rm(wb)
+
+wb <- createWorkbook()
+
+for(number in 1:length(filename)){
+  
+  current_marker <- filename[number]
+
+  file_path_gsmr <- paste0(path,study[number],"/","output/",current_marker,".eff_plot.gz")
+  
+  gsmr_data <- read_gsmr_data(file_path_gsmr)
+  
+  graph <- plot_gsmr_effect(gsmr_data,marker[number],brain[number], colors()[75])
+  
+  ggsave(filename = paste0(marker[number],"_",brain[number]), plot = graph, path = paste0(path,"plots/"), width = 6, height = 4, device='tiff', dpi=700)
+
+  snp_data <- gsmr_snp_effect(gsmr_data,marker[number],brain[number])
+  
+  snp_data <- as.data.frame(snp_data)
+  
+  current_name <- substring(paste0(marker[number],"_",brain[number]), 1, 30)
+  
+  addWorksheet(wb, sheetName = paste0(current_name))
+  
+  writeData(wb, sheet = paste0(current_name), snp_data, rowNames = TRUE)
+  
+}
+
+saveWorkbook(wb, file = paste0(path,"protin_AD_brain_sig.xlsx"), overwrite = TRUE)
+
+```
+
+#TwoSampleMR Sensitivity Analyses
+
+```{r}
+
+mr_df_original_AD <- protein_exposure_filtered %>%
+  filter(AdjustedPvalue < 0.05)
+  # arrange(aesc(qvalue))
+
+#Read in the SNPs from the excel file 
+filename <- mr_df_original_AD$file_name
+study <- mr_df_original_AD$study
+marker <- mr_df_original_AD$Exposure
+brain <- mr_df_original_AD$Outcome
+path <- "/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/"
+all_protein <- list.files("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/plots")
+
+# Make the columns as follows:
+# SNP                 
+# beta                
+# SE                 
+# effect_allele      
+# non-effective allele 
+# p-value            
+# effect_allele freq 
+
+number <- 1
+
+library(TwoSampleMR)
+
+rm(wb)
+
+wb <- createWorkbook()
+
+for(number in 1:length(filename)){
+  
+  #read in the workbook with all our significant proteins
+  current_protein <- readWorkbook(xlsxFile = paste0(path,"protein_AD_brain_sig.xlsx"), sheet = paste0(all_protein[number]), rowNames = TRUE)
+
+  #get the SNPs of interest
+  df <- current_protein %>%
+    select(SNP = snp)
+  
+  #get the whole GWAS from the same protein
+  original_protein <- fread(paste0("/scratch/groups/ukbiobank/sumstats/cleaned/blood_biomarkers/",filename[1],".gz"), verbose = T, data.table = F, fill=TRUE)
+    
+  #join the shorter and the longer protein data together
+  full_df <-  inner_join(df, original_protein)
+  
+  #get all the columns that we need
+  full_df <- full_df %>%
+  select(SNP, BETA, SE, A1, A2, P, MAF)
+
+  #write this newly joined data frame as a table
+  write.table(full_df, file = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sensitivity/",marker[1]), col.names=T, row.names=F, quote=F,sep = "\t")
+  
+  #get the brain volume that we are interested in as well
+  original_brainvol <- fread(paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/brain_vol/",brain[1],".txt"), verbose = T, data.table = F, fill=TRUE)
+  
+  #get the columns that we need from this data frame
+  brain_df <- original_brainvol %>%
+    select(SNP = ID, BETA, SE, A1 = EA, A2 = OA, P, MAF = EAFREQ)
+  
+  #write this as a table
+  write.table(brain_df, file = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sensitivity/",brain[1]), col.names=T, row.names=F, quote=F,sep = "\t")
+
+  #using TwoSampleMR, read in the exposure of interest
+  exposure_dat <- read_exposure_data(
+  filename = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sensitivity/",marker[1]),
+  sep = "\t",                
+  snp_col = "SNP",          
+  beta_col = "BETA",         
+  se_col = "SE",        
+  effect_allele_col = "A1",  
+  other_allele_col = "A2",
+  eaf = "MAF",
+  samplesize_col = "N",
+  pval_col = "P") 
+  
+  exposure_dat$exposure=paste0(marker[1])
+  
+  #using TwoSampleMR, read in the outcome of interest
+  outcome_dat <- read_outcome_data(
+  filename = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sensitivity/",brain[1]),
+  sep = "\t",                
+  snp_col = "SNP",          
+  beta_col = "BETA",         
+  se_col = "SE",        
+  effect_allele_col = "A1",  
+  other_allele_col = "A2",
+  eaf = "MAF",
+  samplesize_col = "N",
+  pval_col = "P") 
+  
+  outcome_dat$outcome=paste0(brain[1])
+  
+  #Harmonisation of SNP instruments between exposures and outcomes 
+  harmonized <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action=2)
+  
+  # get the data ready 
+  # all exposures -> Covid
+  dataMR_keep=subset(harmonized, mr_keep==TRUE)
+  
+  # perform TwoSampleMR for all pairs
+  MR_toCovid_keep<- mr(dataMR_keep, method_list = c("mr_two_sample_ml", "mr_egger_regression","mr_weighted_median", "mr_ivw", "mr_ivw_radial", "mr_ivw_mre", "mr_ivw_fe", "mr_weighted_mode"))
+  
+  #get the name of the current marker and brain volume
+  current_name <- substring(paste0(marker[number],"_",brain[number]), 1, 30)
+  
+  #add a new sheet to the excel data frame and add the sensitivity data to this sheet
+  addWorksheet(wb, sheetName = paste0(current_name))
+
+  writeData(wb, sheet = paste0(current_name), MR_toCovid_keep, rowNames = TRUE)
+  
+  #save the results as a data frame
+  Results_MR_toCovid_keep=MR_toCovid_keep # Saves the results in dataframe
+
+  #plot the results 
+  plot = mr_scatter_plot(Results_MR_toCovid_keep, dataMR_keep)
+  
+  #just choose the plot from the list elements
+  save_plot <- plot[[1]]
+  
+  #save plot
+  ggsave(filename = paste0(marker[number],"_",brain[number]), plot = save_plot, path = paste0(path,"sensitivity/plots/"), width = 6, height = 4, device='tiff', dpi=700)
+
+}
+
+#save the entire excel workbook with all the sensitivity analyses
+saveWorkbook(wb, file = paste0(path,"sensitivity/protein_AD_brain_sensitivity.xlsx"), overwrite = TRUE)
+
+```
+

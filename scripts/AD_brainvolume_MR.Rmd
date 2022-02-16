@@ -1,0 +1,198 @@
+---
+title: "Brain_volumes"
+author: "Alish Palmos"
+date: "05/08/2021"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+This analysis looks at MR between brain volume GWAS and Alzheimer's
+
+#Set-up
+```{r echo=FALSE}
+rm(list=ls())
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+library(data.table)
+library(jtools)
+library(knitr)
+library(broom)
+library(sandwich)
+library(tidyverse)
+library(ggplot2)
+library(sgof)
+library(TwoSampleMR)
+library(kableExtra)
+library(qvalue)
+
+```
+
+# Brain Volumes
+```{r echo=FALSE}
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/brain_vol/AD_Schwartzentruber/") 
+
+#Brain vol data
+
+brain_vol_mr <- list.files(pattern = "*.gsmr")
+
+brain_vol_mr = lapply(brain_vol_mr, read.delim)
+
+brain_vol_mr <- do.call(rbind.data.frame, brain_vol_mr)
+
+brain_vol_mr <- brain_vol_mr %>%
+  filter(nsnp >= 1)
+
+brain_vol_mr_n <- count(brain_vol_mr)
+
+```
+
+# Calculate the number of analyses carried out
+```{r echo=FALSE}
+
+total_tests <- brain_vol_mr_n
+
+threshold <- 0.05/total_tests
+
+threshold <- format(threshold,scientific=FALSE)
+
+print(threshold)
+```
+
+# Combine all to count how many outcomes we had as AD
+```{r echo=FALSE}
+# combine all to count how many exposures and outcomes we had
+mr_df_all <- rbind(brain_vol_mr)
+ad <- str_count(mr_df_all$Exposure, "AD_Schwartzentruber")
+ad[is.na(ad)] <- 0
+sum(ad)
+```
+
+# Combine all to count how many exposures we had as AD
+```{r}
+markers <- mr_df_all[- grep("AD_Schwartzentruber", mr_df_all$Exposure),]
+nrow(markers)
+```
+
+# Combine full data, work out odds ratios and 95% CI
+```{r}
+
+mr_df_all$Beta_exponent <- exp(mr_df_all$bxy)
+mr_df_all$LCI <- mr_df_all$Beta_exponent - (mr_df_all$se * 1.96)
+mr_df_all$UCI <- mr_df_all$Beta_exponent + (mr_df_all$se * 1.96)
+
+mr_df_all$Exposure <- gsub(".txt", "",mr_df_all$Exposure)
+mr_df_all$Outcome <- gsub(".txt", "",mr_df_all$Outcome)
+```
+
+# Compute q-values and add them to the large combined data frame
+```{r}
+pvalues <- mr_df_all$p
+qobj <- qvalue(p = pvalues)
+lfdr <- qobj$lfdr
+summary(qobj)
+hist(qobj)
+plot(qobj)
+
+qvalues <- as.matrix(qobj$qvalues)
+mr_df_all$qvalue <- cbind(qvalues)
+```
+
+# Complete cases
+```{r}
+mr_df_complete <- mr_df_all[complete.cases(mr_df_all), ]
+```
+
+# Adjusted p-values using SGoF method
+```{r}
+p <- SGoF(mr_df_complete$p)
+summary(p)
+
+plot(p)
+
+p_list <- p$Adjusted.pvalues
+
+mr_df_complete <- mr_df_complete[order(mr_df_complete$p),]
+mr_df_complete$sgof <- p_list
+```
+
+# Adjusted p-values to be inclued in the data frame & sorted by p-value
+```{r}
+mr_df_complete$p.adjust <- p.adjust(p = mr_df_complete$p, method = "fdr")
+```
+
+#Get all results with AD as the outcome 
+```{r} 
+
+AD_outcome <- mr_df_complete[!grepl("AD_Schwartzentruber", mr_df_complete$Exposure),]
+
+  AD_outcome %>%
+  kbl() %>%
+  kable_classic_2(full_width = F)
+```
+
+#Get all results with AD as the exposure 
+```{r}
+  
+  AD_exposure <- mr_df_complete[!grepl("AD_Schwartzentruber", mr_df_complete$Outcome),]
+
+  AD_exposure %>%
+  kbl() %>%
+  kable_classic_2(full_width = F)
+```
+
+# Sort by significant p-values and rename headers
+```{r}
+mr_df_filtered <- mr_df_complete %>%
+  filter(qvalue < 0.05) 
+
+mr_df_filtered <- mr_df_filtered %>%
+  rename(Beta = bxy, StandardError = se, Pvalue = p, SNPs = nsnp, LowerCI = LCI, UpperCI =  UCI, AdjustedPvalue = p.adjust)
+
+mr_df_filtered <- mr_df_filtered %>% arrange(desc(Beta_exponent))
+     
+mr_df_filtered$Log_Beta <- log(mr_df_filtered$Beta_exponent) 
+mr_df_filtered$Log_LowerCI <- log(mr_df_filtered$LowerCI) 
+mr_df_filtered$Log_UpperCI <- log(mr_df_filtered$UpperCI) 
+mr_df_filtered$LCI <- mr_df_filtered$Beta - (mr_df_filtered$StandardError * 1.96)
+mr_df_filtered$UCI <- mr_df_filtered$Beta + (mr_df_filtered$StandardError * 1.96)
+
+                                        
+kable(mr_df_filtered)                                
+
+```
+
+```{r fig.width=10, echo=FALSE}
+
+library(scales)
+
+mr_df_filtered <- mr_df_filtered[!grepl("AD_Schwartzentruber", mr_df_filtered$Outcome),]
+
+f <- function(y) seq(floor(min(y)), ceiling(max(y)))
+
+p1 <- ggplot(mr_df_filtered, aes(x=reorder(as.factor(Outcome), Beta) , y=Beta)) + 
+    geom_boxplot(fill="slateblue") + coord_flip() + geom_errorbar(aes(ymax = UCI, ymin = LCI))+ ggtitle("Exposure - Alzheimer's") +
+  xlab("Outcome Variable") + ylab("Beta (95% Confidence Interval)")+ geom_hline(yintercept=0, linetype="dashed", color = "red") + 
+  theme_bw() + theme(text=element_text(size=16, family="Arial"))  +
+    theme(panel.grid.major.x = element_line(size = 0.5,
+                                        linetype = 'dashed',
+                                        colour = "gray41"),
+        panel.grid.major.y = element_line(size = 0.1, 
+                                        linetype = 'solid', 
+                                        colour = "gray62")) +
+  # scale_y_log10() +
+  guides(color = guide_legend(reverse = TRUE)) +
+  coord_flip(clip = "off", ylim = c(-55,74)) 
+
+
+  
+p1  
+
+```
+
