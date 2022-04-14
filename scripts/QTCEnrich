@@ -1,0 +1,1 @@
+./extract_unique_variants.py --directory QTL_directory --file_name qtl_file_suffix --output_file unique_list_significant_variants_file
