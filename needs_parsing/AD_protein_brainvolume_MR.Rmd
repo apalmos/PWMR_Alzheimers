@@ -3,7 +3,7 @@ title: "Brain_vol_markers"
 author: "Alish Palmos"
 date: "27/08/2021"
 output: html_document
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
@@ -39,7 +39,7 @@ find_lost = FALSE
 
 # FORWARD ANALYSIS AD->PROTEIN->BRAIN
 
-# Read in all the studies 
+# Read in all the studies
 
 ##SUN
 
@@ -59,15 +59,15 @@ rm(sun_df)
 sun_df<-data.frame()
 
 for(n in 1:length(sun_mr)){
-  
-  df <- as.data.frame(sun_mr[n]) 
-  
+
+  df <- as.data.frame(sun_mr[n])
+
   df$file_name <- paste(sun_list[n])
-  
+
   temp <- df
-  
+
   sun_df <- rbind(sun_df, temp)
-  
+
 }
 
 sun_mr <- sun_df
@@ -81,7 +81,7 @@ sun_mr <- sun_mr %>%
 # sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
 # sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
 # sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
-# 
+#
 # sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
 # sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
 # sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
@@ -90,7 +90,7 @@ sun_mr <- sun_mr %>%
 sun_n <- count(sun_mr)
 
 if(find_lost == TRUE) {
-#very rough code to work out which runs may not have worked due to HPC memory issues 
+#very rough code to work out which runs may not have worked due to HPC memory issues
 worked = data.frame()
 worked <- unique(sun_mr$file_name)
 worked = data.frame(worked)
@@ -103,7 +103,6 @@ names(test)[1] <- "worked"
 re_do <- merge(test, list)
 write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sun/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
 }
-
 
 
 ```
@@ -126,15 +125,15 @@ rm(suhre_df)
 suhre_df<-data.frame()
 
 for(n in 1:length(suhre_mr)){
-  
-  df <- as.data.frame(suhre_mr[n]) 
-  
+
+  df <- as.data.frame(suhre_mr[n])
+
   df$file_name <- paste(suhre_list[n])
-  
+
   temp <- df
-  
+
   suhre_df <- rbind(suhre_df, temp)
-  
+
 }
 
 suhre_mr <- suhre_df
@@ -153,7 +152,7 @@ suhre_mr <- suhre_mr %>%
 suhre_n <- count(suhre_mr)
 
 if(find_lost == TRUE) {
-#very rough code to work out which runs may not have worked due to HPC memory issues 
+#very rough code to work out which runs may not have worked due to HPC memory issues
 worked = data.frame()
 worked <- unique(suhre_mr$file_name)
 worked = data.frame(worked)
@@ -169,18 +168,18 @@ write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/a
 
 # marker <- c("SUHR1124", "SUHR302", "SUHR700", "SUHR750", "SUHR900", "SUHR923", "SUHR951")
 # name <- c("SNRPF", "F10", "F2", "DCTPP1", "HBA1_HBB", "CA1", "MAPK11")
-# 
+#
 # re_do_2 <- cbind(marker, name)
 # as.data.frame(re_do_2)
 # write.table(x = re_do_2, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/suhre/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
 
 ```
 
-##FOLK 
+##FOLK
 
 ```{r echo=FALSE}
 
-#FOLK 
+#FOLK
 
 setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/folk/output/")
 
@@ -194,15 +193,15 @@ rm(folk_df)
 folk_df<-data.frame()
 
 for(n in 1:length(folk_mr)){
-  
-  df <- as.data.frame(folk_mr[n]) 
-  
+
+  df <- as.data.frame(folk_mr[n])
+
   df$file_name <- paste(folk_list[n])
-  
+
   temp <- df
-  
+
   folk_df <- rbind(folk_df, temp)
-  
+
 }
 
 folk_mr <- folk_df
@@ -215,7 +214,7 @@ folk_mr <- folk_mr %>%
 folk_n <- count(folk_mr)
 
 if(find_lost == TRUE) {
-#very rough code to work out which runs may not have worked due to HPC memory issues 
+#very rough code to work out which runs may not have worked due to HPC memory issues
 worked = data.frame()
 worked <- unique(folk_mr$file_name)
 worked = data.frame(worked)
@@ -251,15 +250,15 @@ rm(wood_df)
 wood_df<-data.frame()
 
 for(n in 1:length(wood_mr)){
-  
-  df <- as.data.frame(wood_mr[n]) 
-  
+
+  df <- as.data.frame(wood_mr[n])
+
   df$file_name <- paste(wood_list[n])
-  
+
   temp <- df
-  
+
   wood_df <- rbind(wood_df, temp)
-  
+
 }
 
 wood_mr <- wood_df
@@ -272,7 +271,7 @@ wood_mr <- wood_mr %>%
 wood_n <- count(wood_mr)
 
 if(find_lost == TRUE) {
-#very rough code to work out which runs may not have worked due to HPC memory issues 
+#very rough code to work out which runs may not have worked due to HPC memory issues
 worked = data.frame()
 worked <- unique(wood_mr$file_name)
 worked = data.frame(worked)
@@ -289,11 +288,11 @@ write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/a
 
 ```
 
-##AHOL 
+##AHOL
 
 ```{r echo=FALSE}
 
-#AHOL 
+#AHOL
 
 setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/ahol/output/")
 
@@ -307,15 +306,15 @@ rm(ahol_df)
 ahol_df<-data.frame()
 
 for(n in 1:length(ahol_mr)){
-  
-  df <- as.data.frame(ahol_mr[n]) 
-  
+
+  df <- as.data.frame(ahol_mr[n])
+
   df$file_name <- paste(ahol_list[n])
-  
+
   temp <- df
-  
+
   ahol_df <- rbind(ahol_df, temp)
-  
+
 }
 
 ahol_mr <- ahol_df
@@ -348,15 +347,15 @@ rm(scal_df)
 scal_df<-data.frame()
 
 for(n in 1:length(scal_mr)){
-  
-  df <- as.data.frame(scal_mr[n]) 
-  
+
+  df <- as.data.frame(scal_mr[n])
+
   df$file_name <- paste(scal_list[n])
-  
+
   temp <- df
-  
+
   scal_df <- rbind(scal_df, temp)
-  
+
 }
 
 scal_mr <- scal_df
@@ -369,7 +368,7 @@ scal_mr <- scal_mr %>%
 scal_n <- count(scal_mr)
 
 if(find_lost == TRUE) {
-#very rough code to work out which runs may not have worked due to HPC memory issues 
+#very rough code to work out which runs may not have worked due to HPC memory issues
 worked = data.frame()
 worked <- unique(scal_mr$file_name)
 worked = data.frame(worked)
@@ -403,15 +402,15 @@ rm(hill_df)
 hill_df<-data.frame()
 
 for(n in 1:length(hill_mr)){
-  
-  df <- as.data.frame(hill_mr[n]) 
-  
+
+  df <- as.data.frame(hill_mr[n])
+
   df$file_name <- paste(hill_list[n])
-  
+
   temp <- df
-  
+
   hill_df <- rbind(hill_df, temp)
-  
+
 }
 
 hill_mr <- hill_df
@@ -425,7 +424,7 @@ hill_mr <- hill_mr %>%
 hill_n <- count(hill_mr)
 
 if(find_lost == TRUE) {
-#very rough code to work out which runs may not have worked due to HPC memory issues 
+#very rough code to work out which runs may not have worked due to HPC memory issues
 worked = data.frame()
 worked <- unique(hill_mr$file_name)
 worked = data.frame(worked)
@@ -459,15 +458,15 @@ rm(hogl_df)
 hogl_df<-data.frame()
 
 for(n in 1:length(hogl_mr)){
-  
-  df <- as.data.frame(hogl_mr[n]) 
-  
+
+  df <- as.data.frame(hogl_mr[n])
+
   df$file_name <- paste(hogl_list[n])
-  
+
   temp <- df
-  
+
   hogl_df <- rbind(hogl_df, temp)
-  
+
 }
 
 hogl_mr <- hogl_df
@@ -480,7 +479,7 @@ hogl_mr <- hogl_mr %>%
 hogl_n <- count(hogl_mr)
 
 if(find_lost == TRUE) {
-#very rough code to work out which runs may not have worked due to HPC memory issues 
+#very rough code to work out which runs may not have worked due to HPC memory issues
 worked = data.frame()
 worked <- unique(hogl_mr$file_name)
 worked = data.frame(worked)
@@ -494,12 +493,12 @@ re_do <- merge(test, list)
 write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/hogl/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
 }
 
-marker <- c("HOGL08", "HOGL103")
-name <- c("SNRPF", "TGFalpha")
-
-re_do_2 <- cbind(marker, name)
-as.data.frame(re_do_2)
-write.table(x = re_do_2, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/hogl/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+# marker <- c("HOGL08", "HOGL103")
+# name <- c("SNRPF", "TGFalpha")
+#
+# re_do_2 <- cbind(marker, name)
+# as.data.frame(re_do_2)
+# write.table(x = re_do_2, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/hogl/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
 
 ```
 
@@ -521,15 +520,15 @@ rm(enroth_df)
 enroth_df<-data.frame()
 
 for(n in 1:length(enroth_mr)){
-  
-  df <- as.data.frame(enroth_mr[n]) 
-  
+
+  df <- as.data.frame(enroth_mr[n])
+
   df$file_name <- paste(enroth_list[n])
-  
+
   temp <- df
-  
+
   enroth_df <- rbind(enroth_df, temp)
-  
+
 }
 
 enroth_mr <- enroth_df
@@ -542,7 +541,7 @@ enroth_mr <- enroth_mr %>%
 enroth_n <- count(enroth_mr)
 
 if(find_lost == TRUE) {
-#very rough code to work out which runs may not have worked due to HPC memory issues 
+#very rough code to work out which runs may not have worked due to HPC memory issues
 worked = data.frame()
 worked <- unique(enroth_mr$file_name)
 worked = data.frame(worked)
@@ -559,9 +558,201 @@ write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/a
 
 ```
 
+##DECO
+
+```{r echo=FALSE}
+
+#DECO
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/output/")
+
+deco_list <- list.files(pattern = "*.gsmr")
+
+deco_mr = lapply(deco_list, read.delim)
+
+n <- 1
+
+rm(deco_df)
+deco_df<-data.frame()
+
+for(n in 1:length(deco_mr)){
+
+  df <- as.data.frame(deco_mr[n])
+
+  df$file_name <- paste(deco_list[n])
+
+  temp <- df
+
+  deco_df <- rbind(deco_df, temp)
+
+}
+
+deco_mr <- deco_df
+
+deco_mr$study <- "Deco"
+
+deco_mr <- deco_mr %>%
+  filter(nsnp >= 1)
+
+deco_n <- count(deco_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list1.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list1.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list2.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list2.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list3.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list3.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list4.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list4.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list5.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list5.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list6.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list6.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list7.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list7.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list8.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list8.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list9.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list9.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list10.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/deco/list10.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+
+```
+
+
 # Count the number of analyses
 ```{r echo=FALSE}
-total_tests <- sum(ahol_n$n, folk_n$n, scal_n$n, suhre_n$n, sun_n$n, wood_n$n, hill_n$n, hogl_n$n, enroth_n$n)
+total_tests <- sum(ahol_n$n, folk_n$n, scal_n$n, suhre_n$n, sun_n$n, wood_n$n, hill_n$n, hogl_n$n, enroth_n$n, deco_n$n)
 
 threshold <- 0.05/total_tests
 
@@ -574,7 +765,7 @@ print(threshold)
 ```{r echo=FALSE}
 
 # combine all to count how many exposures and outcomes we had
-mr_df_all <- rbind(folk_mr, suhre_mr, sun_mr, wood_mr, ahol_mr, scal_mr, hill_mr, hogl_mr, enroth_mr)
+mr_df_all <- rbind(folk_mr, suhre_mr, sun_mr, wood_mr, ahol_mr, scal_mr, hill_mr, hogl_mr, enroth_mr, deco_mr)
 
 ```
 
@@ -586,7 +777,7 @@ protein_outcome <- mr_df_all %>%
   protein_outcome %>%
   kbl() %>%
   kable_classic_2(full_width = F)
-  
+
 ```
 
 # Combine full data, work out odds ratios and 95% CI
@@ -620,21 +811,21 @@ protein_outcome$qvalue <- cbind(qvalues)
 # Sort by significant p-values and rename headers
 ```{r}
 mr_df_filtered <- protein_outcome %>%
-  filter(qvalue < 0.05) 
+  filter(qvalue < 0.05)
 
 mr_df_filtered <- mr_df_filtered %>%
   rename(Beta = bxy, StandardError = se, Pvalue = p, SNPs = nsnp, LowerCI = LCI, UpperCI =  UCI, AdjustedPvalue = qvalue)
 
 mr_df_filtered <- mr_df_filtered %>% arrange(desc(Beta_exponent))
-     
-# mr_df_filtered$Log_Beta <- log(mr_df_filtered$Beta_exponent) 
-# mr_df_filtered$Log_LowerCI <- log(mr_df_filtered$LCI) 
-# mr_df_filtered$Log_UpperCI <- log(mr_df_filtered$UCI) 
+
+# mr_df_filtered$Log_Beta <- log(mr_df_filtered$Beta_exponent)
+# mr_df_filtered$Log_LowerCI <- log(mr_df_filtered$LCI)
+# mr_df_filtered$Log_UpperCI <- log(mr_df_filtered$UCI)
 
 # mr_df_filtered$Exposure <- make.names(mr_df_filtered$Exposure,unique=T)
 # mr_df_filtered$Outcome <- make.names(mr_df_filtered$Outcome,unique=T)
 
-                                        
+
   mr_df_filtered %>%
   kbl() %>%
   kable_classic_2(full_width = F)
@@ -644,7 +835,7 @@ mr_df_filtered$file_name <-   gsub("\\..*","",mr_df_filtered$file_name)
 mr_df_filtered$marker_name <- paste(mr_df_filtered$file_name, mr_df_filtered$study, sep="_")
 
 # mr_df_filtered <- mr_df_filtered[!duplicated(mr_df_filtered$Exposure), ]
-# 
+#
 mr_df_filtered <- mr_df_filtered[!duplicated(mr_df_filtered[c(7,2)]),]
 
 ```
@@ -655,17 +846,20 @@ mr_df_filtered <- mr_df_filtered[!duplicated(mr_df_filtered[c(7,2)]),]
 library(scales)
 
 protein_outcome_filtered <- mr_df_filtered %>%
-  filter(AdjustedPvalue < 0.05) 
+  filter(AdjustedPvalue < 0.05)
 
-AD_prot_brain <- ggplot(protein_outcome_filtered, aes(x=reorder(as.factor(Exposure), Beta) , y=Beta)) + 
+protein_outcome_filtered_brainexposure <- subset(protein_outcome_filtered, nchar(as.character(Exposure)) >= 10)
+protein_outcome_filtered <- subset(protein_outcome_filtered, nchar(as.character(Exposure)) <= 10)
+
+AD_prot_brain <- ggplot(protein_outcome_filtered, aes(x=reorder(as.factor(Exposure), Beta) , y=Beta)) +
     geom_boxplot(fill="slateblue") + coord_flip() + geom_errorbar(aes(ymax = UpperCI, ymin = LowerCI))+ ggtitle("Alzheimer's -> Proteins -> Brain Volumes MR") +
-  xlab("Exposure Variable") + ylab("Odds Ratio (95% Confidence Interval)")+ geom_hline(yintercept=0, linetype="dashed", color = "red") + 
+  xlab("Exposure Variable") + ylab("Odds Ratio (95% Confidence Interval)")+ geom_hline(yintercept=0, linetype="dashed", color = "red") +
   theme_bw() + theme(text=element_text(size=25, family="Arial")) +
     facet_wrap(~Outcome, scale="free") +
   geom_hline(linetype = "dashed", yintercept = 0) +
   guides(color = guide_legend(reverse = TRUE)) +
   theme(text=element_text(size=10))
-  
+
 AD_prot_brain
 
 # ggsave(path = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/", filename = "AD_prot_brain_plot", plot = AD_prot_brain, device='tiff', dpi=300)
@@ -674,7 +868,7 @@ AD_prot_brain
 
 # DO THE REVERSE PROTEIN->AD->BRAIN
 
-# Read in all the studies 
+# Read in all the studies
 
 ##SUN
 
@@ -694,15 +888,15 @@ rm(sun_df)
 sun_df<-data.frame()
 
 for(n in 1:length(sun_mr)){
-  
-  df <- as.data.frame(sun_mr[n]) 
-  
+
+  df <- as.data.frame(sun_mr[n])
+
   df$file_name <- paste(sun_list[n])
-  
+
   temp <- df
-  
+
   sun_df <- rbind(sun_df, temp)
-  
+
 }
 
 sun_mr <- sun_df
@@ -716,7 +910,7 @@ sun_mr <- sun_mr %>%
 # sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
 # sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
 # sun_mr$Exposure <- sub("^(.*)[.].*", "\\1",sun_mr$Exposure)
-# 
+#
 # sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
 # sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
 # sun_mr$Outcome <- sub("^(.*)[.].*", "\\1",sun_mr$Outcome)
@@ -725,7 +919,7 @@ sun_mr <- sun_mr %>%
 sun_n <- count(sun_mr)
 
 if(find_lost == TRUE) {
-#very rough code to work out which runs may not have worked due to HPC memory issues 
+#very rough code to work out which runs may not have worked due to HPC memory issues
 worked = data.frame()
 worked <- unique(sun_mr$file_name)
 worked = data.frame(worked)
@@ -761,15 +955,15 @@ rm(suhre_df)
 suhre_df<-data.frame()
 
 for(n in 1:length(suhre_mr)){
-  
-  df <- as.data.frame(suhre_mr[n]) 
-  
+
+  df <- as.data.frame(suhre_mr[n])
+
   df$file_name <- paste(suhre_list[n])
-  
+
   temp <- df
-  
+
   suhre_df <- rbind(suhre_df, temp)
-  
+
 }
 
 suhre_mr <- suhre_df
@@ -789,7 +983,7 @@ suhre_mr <- suhre_mr %>%
 suhre_n <- count(suhre_mr)
 
 if(find_lost == TRUE) {
-#very rough code to work out which runs may not have worked due to HPC memory issues 
+#very rough code to work out which runs may not have worked due to HPC memory issues
 worked = data.frame()
 worked <- unique(suhre_mr$file_name)
 worked = data.frame(worked)
@@ -805,18 +999,18 @@ write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/a
 
 # marker <- c("SUHR1003", "SUHR1124", "SUHR316", "SUHR723", "SUHR800", "SUHR91", "SUHR987")
 # name <- c("LILRB2", "SNRPF", "CD33", "IL1RL1", "C4A_C4B", "STC1", "CD55")
-# 
+#
 # re_do_2 <- cbind(marker, name)
 # as.data.frame(re_do_2)
 # write.table(x = re_do_2, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/suhre/new_list.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
 
 ```
 
-##FOLK 
+##FOLK
 
 ```{r echo=FALSE}
 
-#FOLK 
+#FOLK
 
 setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/folk/output/")
 
@@ -830,15 +1024,15 @@ rm(folk_df)
 folk_df<-data.frame()
 
 for(n in 1:length(folk_mr)){
-  
-  df <- as.data.frame(folk_mr[n]) 
-  
+
+  df <- as.data.frame(folk_mr[n])
+
   df$file_name <- paste(folk_list[n])
-  
+
   temp <- df
-  
+
   folk_df <- rbind(folk_df, temp)
-  
+
 }
 
 folk_mr <- folk_df
@@ -851,7 +1045,7 @@ folk_mr <- folk_mr %>%
 folk_n <- count(folk_mr)
 
 if(find_lost == TRUE) {
-#very rough code to work out which runs may not have worked due to HPC memory issues 
+#very rough code to work out which runs may not have worked due to HPC memory issues
 worked = data.frame()
 worked <- unique(folk_mr$file_name)
 worked = data.frame(worked)
@@ -885,15 +1079,15 @@ rm(wood_df)
 wood_df<-data.frame()
 
 for(n in 1:length(wood_mr)){
-  
-  df <- as.data.frame(wood_mr[n]) 
-  
+
+  df <- as.data.frame(wood_mr[n])
+
   df$file_name <- paste(wood_list[n])
-  
+
   temp <- df
-  
+
   wood_df <- rbind(wood_df, temp)
-  
+
 }
 
 wood_mr <- wood_df
@@ -926,15 +1120,15 @@ rm(scal_df)
 scal_df<-data.frame()
 
 for(n in 1:length(scal_mr)){
-  
-  df <- as.data.frame(scal_mr[n]) 
-  
+
+  df <- as.data.frame(scal_mr[n])
+
   df$file_name <- paste(scal_list[n])
-  
+
   temp <- df
-  
+
   scal_df <- rbind(scal_df, temp)
-  
+
 }
 
 scal_mr <- scal_df
@@ -947,7 +1141,7 @@ scal_mr <- scal_mr %>%
 scal_n <- count(scal_mr)
 
 if(find_lost == TRUE) {
-#very rough code to work out which runs may not have worked due to HPC memory issues 
+#very rough code to work out which runs may not have worked due to HPC memory issues
 worked = data.frame()
 worked <- unique(scal_mr$file_name)
 worked = data.frame(worked)
@@ -981,15 +1175,15 @@ rm(enroth_df)
 enroth_df<-data.frame()
 
 for(n in 1:length(enroth_mr)){
-  
-  df <- as.data.frame(enroth_mr[n]) 
-  
+
+  df <- as.data.frame(enroth_mr[n])
+
   df$file_name <- paste(enroth_list[n])
-  
+
   temp <- df
-  
+
   enroth_df <- rbind(enroth_df, temp)
-  
+
 }
 
 enroth_mr <- enroth_df
@@ -1002,7 +1196,7 @@ enroth_mr <- enroth_mr %>%
 enroth_n <- count(enroth_mr)
 
 if(find_lost == TRUE) {
-#very rough code to work out which runs may not have worked due to HPC memory issues 
+#very rough code to work out which runs may not have worked due to HPC memory issues
 worked = data.frame()
 worked <- unique(enroth_mr$file_name)
 worked = data.frame(worked)
@@ -1018,6 +1212,198 @@ write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/a
 
 ```
 
+##DECO
+
+```{r echo=FALSE}
+
+#DECO
+
+setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/output/")
+
+deco_list <- list.files(pattern = "*.gsmr")
+
+deco_mr = lapply(deco_list, read.delim)
+
+n <- 1
+
+rm(deco_df)
+deco_df<-data.frame()
+
+for(n in 1:length(deco_mr)){
+
+  df <- as.data.frame(deco_mr[n])
+
+  df$file_name <- paste(deco_list[n])
+
+  temp <- df
+
+  deco_df <- rbind(deco_df, temp)
+
+}
+
+deco_mr <- deco_df
+
+deco_mr$study <- "Deco"
+
+deco_mr <- deco_mr %>%
+  filter(nsnp >= 1)
+
+deco_n <- count(deco_mr)
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list1.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list1.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list2.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list2.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list3.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list3.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list4.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list4.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list5.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list5.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list6.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list6.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list7.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list7.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list8.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list8.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list9.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list9.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+if(find_lost == TRUE) {
+#very rough code to work out which runs may not have worked due to HPC memory issues
+worked = data.frame()
+worked <- unique(deco_mr$file_name)
+worked = data.frame(worked)
+worked$worked <-   gsub("\\..*","",worked$worked)
+list <- read.table("/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list10.txt")
+names(list)[1] <- "worked"
+test <- setdiff(list$worked, worked$worked)
+test = data.frame(test)
+names(test)[1] <- "worked"
+re_do <- merge(test, list)
+write.table(x = re_do, file = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/deco/list10.txt", quote = FALSE, row.names = FALSE, col.names = FALSE, sep = "\t ")
+}
+
+
+```
+
+
 # Count the number of anlayses
 ```{r echo=FALSE}
 total_tests <- sum(folk_n$n, scal_n$n, suhre_n$n, sun_n$n, wood_n$n, enroth_n$n)
@@ -1030,7 +1416,7 @@ print(threshold)
 ```
 
 
-# Combine all 
+# Combine all
 ```{r echo=FALSE}
 
 # combine all to count how many exposures and outcomes we had
@@ -1120,16 +1506,16 @@ protin_exposure$qvalue <- cbind(qvalues)
 # Sort by significant p-values and rename headers
 ```{r}
 mr_df_filtered <- protin_exposure %>%
-  filter(qvalue < 0.05) 
+  filter(qvalue < 0.05)
 
 mr_df_filtered <- mr_df_filtered %>%
   rename(Beta = bxy, StandardError = se, Pvalue = p, SNPs = nsnp, LowerCI = LCI, UpperCI =  UCI, AdjustedPvalue = qvalue)
 
 mr_df_filtered <- mr_df_filtered %>% arrange(desc(Beta_exponent))
-     
-# mr_df_filtered$Log_Beta <- log(mr_df_filtered$Beta_exponent) 
-# mr_df_filtered$Log_LowerCI <- log(mr_df_filtered$LowerCI) 
-# mr_df_filtered$Log_UpperCI <- log(mr_df_filtered$UpperCI) 
+
+# mr_df_filtered$Log_Beta <- log(mr_df_filtered$Beta_exponent)
+# mr_df_filtered$Log_LowerCI <- log(mr_df_filtered$LowerCI)
+# mr_df_filtered$Log_UpperCI <- log(mr_df_filtered$UpperCI)
 
 # mr_df_filtered$Exposure <- make.names(mr_df_filtered$Exposure,unique=T)
 # mr_df_filtered$Outcome <- make.names(mr_df_filtered$Outcome,unique=T)
@@ -1150,11 +1536,14 @@ mr_df_filtered$marker_name <- paste(mr_df_filtered$file_name, mr_df_filtered$stu
 library(scales)
 
 protein_exposure_filtered <- mr_df_filtered %>%
-  filter(AdjustedPvalue < 0.05) 
+  filter(AdjustedPvalue < 0.05)
 
-protein_AD_brain <- ggplot(protein_exposure_filtered, aes(x=reorder(as.factor(Exposure), Beta) , y=Beta)) + 
+protein_exposure_filtered_brainexposure <- subset(protein_exposure_filtered, nchar(as.character(Exposure)) >= 9)
+protein_exposure_filtered <- subset(protein_exposure_filtered, nchar(as.character(Exposure)) <= 10)
+
+protein_AD_brain <- ggplot(protein_exposure_filtered, aes(x=reorder(as.factor(Exposure), Beta) , y=Beta)) +
     geom_boxplot(fill="slateblue") + coord_flip() + geom_errorbar(aes(ymax = UpperCI, ymin = LowerCI))+ ggtitle("Proteins -> Alzheimer's -> Brain Volumes MR") +
-  xlab("Exposure Variable") + ylab("Odds Ratio (95% Confidence Interval)")+ geom_hline(yintercept=0, linetype="dashed", color = "red") + 
+  xlab("Exposure Variable") + ylab("Odds Ratio (95% Confidence Interval)")+ geom_hline(yintercept=0, linetype="dashed", color = "red") +
   theme_bw() + theme(text=element_text(size=25, family="Arial")) +
     facet_wrap(~Outcome, scale="free") +
   geom_hline(linetype = "dashed", yintercept = 0) +
@@ -1162,9 +1551,9 @@ protein_AD_brain <- ggplot(protein_exposure_filtered, aes(x=reorder(as.factor(Ex
   theme(text=element_text(size=10))
 
 protein_AD_brain
-  
+
 # ggsave(path = "/mnt/lustre/groups/ukbiobank/Edinburgh_Data/usr/alish/AD_MR/protein_brainvol_MR/protein_AD//", filename = "protein_AD_brain_plot", plot = protein_AD_brain, device='tiff', dpi=300)
- 
+
 ```
 
 
@@ -1257,7 +1646,7 @@ read_gsmr_data = function(gsmr_effect_file) {
         if(strbuf == "#trait_begin") {
             # Read the exposures and outcomes
             resbuf = read_gsmr_trait(file_con);
-            expo_str = resbuf$expo_str; 
+            expo_str = resbuf$expo_str;
             outcome_str = resbuf$outcome_str;
             pheno_str = c(expo_str, outcome_str);
             nexpo = length(expo_str); noutcome = length(outcome_str)
@@ -1295,17 +1684,17 @@ gsmr_summary = function(gsmr_data) {
     logger_m = paste(nexpo, "exposure(s):");
     logger_m = paste(logger_m, gsmr_data$pheno[3])
     if(nexpo > 1) {
-        for(i in 2 : nexpo) 
+        for(i in 2 : nexpo)
             logger_m = paste(logger_m, gsmr_data$pheno[i+2], sep=", ")
-    } 
+    }
     message(logger_m)
     # outcome
     logger_m = paste(noutcome, "outcome(s):");
     logger_m = paste(logger_m, gsmr_data$pheno[3+nexpo])
     if(noutcome > 1) {
-        for(i in 2 : noutcome) 
+        for(i in 2 : noutcome)
             logger_m = paste(logger_m, gsmr_data$pheno[i+2+nexpo], sep=", ")
-    } 
+    }
     message(logger_m)
 
     message("\n## GSMR result")
@@ -1381,16 +1770,16 @@ plot_snp_effect = function(expo_str, outcome_str, bxy, bzx, bzx_se, bzy, bzy_se,
         ystart = bzy[i]; yend = bzy[i]
         segments(xstart, ystart, xend, yend, lwd=1.5, col=effect_col)
         # y axis
-        xstart = bzx[i]; xend = bzx[i] 
+        xstart = bzx[i]; xend = bzx[i]
         ystart = bzy[i] - bzy_se[i]; yend = bzy[i] + bzy_se[i]
         segments(xstart, ystart, xend, yend, lwd=1.5, col=effect_col)
-        
-        
+
+
     }
-    
+
     p1_recorded <- recordPlot()
 ggdraw(p1_recorded)
-    
+
 }
 
 # ************************************************** #
@@ -1467,7 +1856,7 @@ plot_gsmr_pvalue = function(gsmr_data, expo_str, outcome_str, gwas_thresh=5e-8, 
 plot_bxy_distribution = function(gsmr_data, expo_str, outcome_str, effect_col=colors()[75]) {
     resbuf = gsmr_snp_effect(gsmr_data, expo_str, outcome_str);
     bzx = resbuf$bzx; bzx_pval = resbuf$bzx_pval;
-    bzy = resbuf$bzy; 
+    bzy = resbuf$bzy;
     bxy = bzy/bzx
     # plot
     plot_snp_bxy(expo_str, outcome_str, bxy, bzx_pval, effect_col)
@@ -1480,8 +1869,7 @@ plot_bxy_distribution = function(gsmr_data, expo_str, outcome_str, effect_col=co
 # Create a loop for getting all the GSMR data into a Google Sheet
 ```{r}
 
-mr_df_original_AD <- protein_outcome_filtered %>%
-  filter(AdjustedPvalue < 0.05)
+mr_df_original_AD <- protein_outcome_filtered
   # arrange(aesc(qvalue))
 
 library(vroom)
@@ -1504,27 +1892,27 @@ rm(wb)
 wb <- createWorkbook()
 
 for(number in 1:length(filename)){
-  
+
   current_marker <- filename[number]
 
   file_path_gsmr <- paste0(path,study[number],"/","output/",current_marker,".eff_plot.gz")
-  
+
   gsmr_data <- read_gsmr_data(file_path_gsmr)
-  
+
   graph <- plot_gsmr_effect(gsmr_data,marker[number],brain[number], colors()[75])
-  
+
   ggsave(filename = paste0(marker[number],"_",brain[number]), plot = graph, path = paste0(path,"plots/"), width = 6, height = 4, device='tiff', dpi=700)
 
   snp_data <- gsmr_snp_effect(gsmr_data,marker[number],brain[number])
-  
+
   snp_data <- as.data.frame(snp_data)
-  
+
   current_name <- substring(paste0(marker[number],"_",brain[number]), 1, 30)
-  
+
   addWorksheet(wb, sheetName = paste0(current_name))
-  
+
   writeData(wb, sheet = paste0(current_name), snp_data, rowNames = TRUE)
-  
+
 }
 
 saveWorkbook(wb, file = paste0(path,"AD_protein_brain_sig.xlsx"), overwrite = TRUE)
@@ -1536,11 +1924,12 @@ saveWorkbook(wb, file = paste0(path,"AD_protein_brain_sig.xlsx"), overwrite = TR
 
 ```{r}
 
-mr_df_original_AD <- protein_outcome_filtered %>%
-  filter(AdjustedPvalue < 0.05)
+mr_df_original_AD <- protein_outcome_filtered
   # arrange(aesc(qvalue))
 
-#Read in the SNPs from the excel file 
+library(openxlsx)
+
+#Read in the SNPs from the excel file
 filename <- mr_df_original_AD$file_name
 study <- mr_df_original_AD$study
 marker <- mr_df_original_AD$Exposure
@@ -1548,14 +1937,16 @@ brain <- mr_df_original_AD$Outcome
 path <- "/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/"
 all_protein <- list.files("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/plots")
 
+sheets <- getSheetNames(paste0(path,"AD_protein_brain_sig.xlsx"))
+
 # Make the columns as follows:
 # SNP                 
 # beta                
 # SE                 
 # effect_allele      
-# non-effective allele 
+# non-effective allele
 # p-value            
-# effect_allele freq 
+# effect_allele freq
 
 number <- 1
 
@@ -1566,40 +1957,42 @@ rm(wb)
 wb <- createWorkbook()
 
 for(number in 1:length(filename)){
-  
+
   #read in the workbook with all our significant proteins
-  current_protein <- readWorkbook(xlsxFile = paste0(path,"AD_protein_brain_sig.xlsx"), sheet = paste0(all_protein[number]), rowNames = TRUE)
+  current_protein <- readWorkbook(xlsxFile = paste0(path,"AD_protein_brain_sig.xlsx"), sheet = sheets[number], rowNames = TRUE)
 
   #get the SNPs of interest
   df <- current_protein %>%
     select(SNP = snp)
-  
+
   #get the whole GWAS from the same protein
-  original_protein <- fread(paste0("/scratch/groups/ukbiobank/sumstats/cleaned/blood_biomarkers/",filename[1],".gz"), verbose = T, data.table = F, fill=TRUE)
-    
+  original_protein <- fread(paste0("/scratch/groups/ukbiobank/sumstats/cleaned/blood_biomarkers/",filename[number],".gz"), verbose = T, data.table = F, fill=TRUE)
+
   #join the shorter and the longer protein data together
   full_df <-  inner_join(df, original_protein)
-  
+
   #get all the columns that we need
   full_df <- full_df %>%
   select(SNP, BETA, SE, A1, A2, P, MAF)
 
   #write this newly joined data frame as a table
-  write.table(full_df, file = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sensitivity/",marker[1]), col.names=T, row.names=F, quote=F,sep = "\t")
-  
+  write.table(full_df, file = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sensitivity/",marker[number]), col.names=T, row.names=F, quote=F,sep = "\t")
+
   #get the brain volume that we are interested in as well
-  original_brainvol <- fread(paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/brain_vol/",brain[1],".txt"), verbose = T, data.table = F, fill=TRUE)
-  
+  original_brainvol <- fread(paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/brain_vol/",brain[number],".txt"), verbose = T, data.table = F, fill=TRUE)
+
   #get the columns that we need from this data frame
   brain_df <- original_brainvol %>%
     select(SNP = ID, BETA, SE, A1 = EA, A2 = OA, P, MAF = EAFREQ)
-  
+
+  brain_df_matchesSNP <- subset(brain_df, SNP %in% full_df$SNP)
+
   #write this as a table
-  write.table(brain_df, file = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sensitivity/",brain[1]), col.names=T, row.names=F, quote=F,sep = "\t")
+  write.table(brain_df_matchesSNP, file = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sensitivity/",brain[number]), col.names=T, row.names=F, quote=F,sep = "\t")
 
   #using TwoSampleMR, read in the exposure of interest
   exposure_dat <- read_exposure_data(
-  filename = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sensitivity/",marker[1]),
+  filename = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sensitivity/",marker[number]),
   sep = "\t",                
   snp_col = "SNP",          
   beta_col = "BETA",         
@@ -1608,13 +2001,13 @@ for(number in 1:length(filename)){
   other_allele_col = "A2",
   eaf = "MAF",
   samplesize_col = "N",
-  pval_col = "P") 
-  
-  exposure_dat$exposure=paste0(marker[1])
-  
+  pval_col = "P")
+
+  exposure_dat$exposure=paste0(marker[number])
+
   #using TwoSampleMR, read in the outcome of interest
   outcome_dat <- read_outcome_data(
-  filename = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sensitivity/",brain[1]),
+  filename = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/AD_protein/sensitivity/",brain[number]),
   sep = "\t",                
   snp_col = "SNP",          
   beta_col = "BETA",         
@@ -1623,37 +2016,37 @@ for(number in 1:length(filename)){
   other_allele_col = "A2",
   eaf = "MAF",
   samplesize_col = "N",
-  pval_col = "P") 
-  
-  outcome_dat$outcome=paste0(brain[1])
-  
-  #Harmonisation of SNP instruments between exposures and outcomes 
+  pval_col = "P")
+
+  outcome_dat$outcome=paste0(brain[number])
+
+  #Harmonisation of SNP instruments between exposures and outcomes
   harmonized <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action=2)
-  
-  # get the data ready 
+
+  # get the data ready
   # all exposures -> Covid
   dataMR_keep=subset(harmonized, mr_keep==TRUE)
-  
+
   # perform TwoSampleMR for all pairs
-  MR_toCovid_keep<- mr(dataMR_keep, method_list = c("mr_two_sample_ml", "mr_egger_regression","mr_weighted_median", "mr_ivw", "mr_ivw_radial", "mr_ivw_mre", "mr_ivw_fe", "mr_weighted_mode"))
-  
+  MR_toCovid_keep<- mr(dataMR_keep)
+
   #get the name of the current marker and brain volume
   current_name <- substring(paste0(marker[number],"_",brain[number]), 1, 30)
-  
+
   #add a new sheet to the excel data frame and add the sensitivity data to this sheet
   addWorksheet(wb, sheetName = paste0(current_name))
 
   writeData(wb, sheet = paste0(current_name), MR_toCovid_keep, rowNames = TRUE)
-  
+
   #save the results as a data frame
   Results_MR_toCovid_keep=MR_toCovid_keep # Saves the results in dataframe
 
-  #plot the results 
+  #plot the results
   plot = mr_scatter_plot(Results_MR_toCovid_keep, dataMR_keep)
-  
+
   #just choose the plot from the list elements
   save_plot <- plot[[1]]
-  
+
   #save plot
   ggsave(filename = paste0(marker[number],"_",brain[number]), plot = save_plot, path = paste0(path,"sensitivity/plots/"), width = 6, height = 4, device='tiff', dpi=700)
 
@@ -1669,8 +2062,7 @@ saveWorkbook(wb, file = paste0(path,"sensitivity/AD_protein_brain_sensitivity.xl
 # Create a loop for getting all the GSMR data into a Google Sheet
 ```{r}
 
-mr_df_original_AD <- protein_exposure_filtered %>%
-  filter(AdjustedPvalue < 0.05)
+mr_df_original_AD <- protein_exposure_filtered
   # arrange(aesc(qvalue))
 
 library(vroom)
@@ -1693,30 +2085,30 @@ rm(wb)
 wb <- createWorkbook()
 
 for(number in 1:length(filename)){
-  
+
   current_marker <- filename[number]
 
   file_path_gsmr <- paste0(path,study[number],"/","output/",current_marker,".eff_plot.gz")
-  
+
   gsmr_data <- read_gsmr_data(file_path_gsmr)
-  
+
   graph <- plot_gsmr_effect(gsmr_data,marker[number],brain[number], colors()[75])
-  
+
   ggsave(filename = paste0(marker[number],"_",brain[number]), plot = graph, path = paste0(path,"plots/"), width = 6, height = 4, device='tiff', dpi=700)
 
   snp_data <- gsmr_snp_effect(gsmr_data,marker[number],brain[number])
-  
+
   snp_data <- as.data.frame(snp_data)
-  
+
   current_name <- substring(paste0(marker[number],"_",brain[number]), 1, 30)
-  
+
   addWorksheet(wb, sheetName = paste0(current_name))
-  
+
   writeData(wb, sheet = paste0(current_name), snp_data, rowNames = TRUE)
-  
+
 }
 
-saveWorkbook(wb, file = paste0(path,"protin_AD_brain_sig.xlsx"), overwrite = TRUE)
+saveWorkbook(wb, file = paste0(path,"sensitivity/protein_AD_brain_sig.xlsx"), overwrite = TRUE)
 
 ```
 
@@ -1724,11 +2116,10 @@ saveWorkbook(wb, file = paste0(path,"protin_AD_brain_sig.xlsx"), overwrite = TRU
 
 ```{r}
 
-mr_df_original_AD <- protein_exposure_filtered %>%
-  filter(AdjustedPvalue < 0.05)
+mr_df_original_AD <- protein_exposure_filtered
   # arrange(aesc(qvalue))
 
-#Read in the SNPs from the excel file 
+#Read in the SNPs from the excel file
 filename <- mr_df_original_AD$file_name
 study <- mr_df_original_AD$study
 marker <- mr_df_original_AD$Exposure
@@ -1741,9 +2132,9 @@ all_protein <- list.files("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_bra
 # beta                
 # SE                 
 # effect_allele      
-# non-effective allele 
+# non-effective allele
 # p-value            
-# effect_allele freq 
+# effect_allele freq
 
 number <- 1
 
@@ -1754,40 +2145,40 @@ rm(wb)
 wb <- createWorkbook()
 
 for(number in 1:length(filename)){
-  
+
   #read in the workbook with all our significant proteins
-  current_protein <- readWorkbook(xlsxFile = paste0(path,"protein_AD_brain_sig.xlsx"), sheet = paste0(all_protein[number]), rowNames = TRUE)
+  current_protein <- readWorkbook(xlsxFile = paste0(path,"sensitivity/protein_AD_brain_sig.xlsx"), sheet = paste0(all_protein[number]), rowNames = TRUE)
 
   #get the SNPs of interest
   df <- current_protein %>%
     select(SNP = snp)
-  
+
   #get the whole GWAS from the same protein
-  original_protein <- fread(paste0("/scratch/groups/ukbiobank/sumstats/cleaned/blood_biomarkers/",filename[1],".gz"), verbose = T, data.table = F, fill=TRUE)
-    
+  original_protein <- fread(paste0("/scratch/groups/ukbiobank/sumstats/cleaned/blood_biomarkers/",filename[number],".gz"), verbose = T, data.table = F, fill=TRUE)
+
   #join the shorter and the longer protein data together
   full_df <-  inner_join(df, original_protein)
-  
+
   #get all the columns that we need
   full_df <- full_df %>%
   select(SNP, BETA, SE, A1, A2, P, MAF)
 
   #write this newly joined data frame as a table
-  write.table(full_df, file = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sensitivity/",marker[1]), col.names=T, row.names=F, quote=F,sep = "\t")
-  
+  write.table(full_df, file = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sensitivity/",marker[number]), col.names=T, row.names=F, quote=F,sep = "\t")
+
   #get the brain volume that we are interested in as well
-  original_brainvol <- fread(paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/brain_vol/",brain[1],".txt"), verbose = T, data.table = F, fill=TRUE)
-  
+  original_brainvol <- fread(paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/brain_vol/",brain[number],".txt"), verbose = T, data.table = F, fill=TRUE)
+
   #get the columns that we need from this data frame
   brain_df <- original_brainvol %>%
     select(SNP = ID, BETA, SE, A1 = EA, A2 = OA, P, MAF = EAFREQ)
-  
+
   #write this as a table
-  write.table(brain_df, file = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sensitivity/",brain[1]), col.names=T, row.names=F, quote=F,sep = "\t")
+  write.table(brain_df, file = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sensitivity/",brain[number]), col.names=T, row.names=F, quote=F,sep = "\t")
 
   #using TwoSampleMR, read in the exposure of interest
   exposure_dat <- read_exposure_data(
-  filename = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sensitivity/",marker[1]),
+  filename = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sensitivity/",marker[number]),
   sep = "\t",                
   snp_col = "SNP",          
   beta_col = "BETA",         
@@ -1796,13 +2187,13 @@ for(number in 1:length(filename)){
   other_allele_col = "A2",
   eaf = "MAF",
   samplesize_col = "N",
-  pval_col = "P") 
-  
-  exposure_dat$exposure=paste0(marker[1])
-  
+  pval_col = "P")
+
+  exposure_dat$exposure=paste0(marker[number])
+
   #using TwoSampleMR, read in the outcome of interest
   outcome_dat <- read_outcome_data(
-  filename = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sensitivity/",brain[1]),
+  filename = paste0("/scratch/groups/ukbiobank/usr/alish/AD_MR/protein_brainvol_MR/protein_AD/sensitivity/",brain[number]),
   sep = "\t",                
   snp_col = "SNP",          
   beta_col = "BETA",         
@@ -1811,39 +2202,39 @@ for(number in 1:length(filename)){
   other_allele_col = "A2",
   eaf = "MAF",
   samplesize_col = "N",
-  pval_col = "P") 
-  
-  outcome_dat$outcome=paste0(brain[1])
-  
-  #Harmonisation of SNP instruments between exposures and outcomes 
+  pval_col = "P")
+
+  outcome_dat$outcome=paste0(brain[number])
+
+  #Harmonisation of SNP instruments between exposures and outcomes
   harmonized <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action=2)
-  
-  # get the data ready 
+
+  # get the data ready
   # all exposures -> Covid
   dataMR_keep=subset(harmonized, mr_keep==TRUE)
-  
+
   # perform TwoSampleMR for all pairs
   MR_toCovid_keep<- mr(dataMR_keep, method_list = c("mr_two_sample_ml", "mr_egger_regression","mr_weighted_median", "mr_ivw", "mr_ivw_radial", "mr_ivw_mre", "mr_ivw_fe", "mr_weighted_mode"))
-  
+
   #get the name of the current marker and brain volume
   current_name <- substring(paste0(marker[number],"_",brain[number]), 1, 30)
-  
+
   #add a new sheet to the excel data frame and add the sensitivity data to this sheet
   addWorksheet(wb, sheetName = paste0(current_name))
 
   writeData(wb, sheet = paste0(current_name), MR_toCovid_keep, rowNames = TRUE)
-  
+
   #save the results as a data frame
   Results_MR_toCovid_keep=MR_toCovid_keep # Saves the results in dataframe
 
-  #plot the results 
+  #plot the results
   plot = mr_scatter_plot(Results_MR_toCovid_keep, dataMR_keep)
-  
+
   #just choose the plot from the list elements
-  save_plot <- plot[[1]]
-  
+  try({save_plot <- plot[[1]]})
+
   #save plot
-  ggsave(filename = paste0(marker[number],"_",brain[number]), plot = save_plot, path = paste0(path,"sensitivity/plots/"), width = 6, height = 4, device='tiff', dpi=700)
+  try({ggsave(filename = paste0(marker[number],"_",brain[number]), plot = save_plot, path = paste0(path,"sensitivity/plots/"), width = 6, height = 4, device='tiff', dpi=700)})
 
 }
 
@@ -1851,4 +2242,3 @@ for(number in 1:length(filename)){
 saveWorkbook(wb, file = paste0(path,"sensitivity/protein_AD_brain_sensitivity.xlsx"), overwrite = TRUE)
 
 ```
-
