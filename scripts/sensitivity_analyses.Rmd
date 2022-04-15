@@ -22,22 +22,29 @@ setwd("/scratch/groups/ukbiobank/usr/alish/AD_MR/")
 ```
 
 ```{r include=FALSE}
-library(data.table)
-library(jtools)
-library(knitr)
-library(broom)
-library(sandwich)
-library(tidyverse)
-library(ggplot2)
-library(dplyr)
-library(sgof)
-library(TwoSampleMR)
-library(qvalue)
-library(kableExtra)
-library(vroom)
-library(vroom)
-library(openxlsx)
-library(cowplot)
+
+source(file = "package_check.R")
+
+packages <- c("data.table",
+              "jtools",
+              "knitr",
+              "gtsummary",
+              "broom",
+              "sandwich",
+              "tidyverse",
+              "ggplot2",
+              "dplyr",
+              "sgof",
+              "TwoSampleMR",
+              "qvalue",
+              "kableExtra",
+              "vroom",
+              "openxlsx",
+              "cowplot",
+              "gridGraphics")
+
+package_check(packages)
+
 ```
 
 # Functions to get SNP infro from GSMR
@@ -352,10 +359,10 @@ plot_bxy_distribution = function(gsmr_data, expo_str, outcome_str, effect_col=co
 # Create a loop for getting all the GSMR data into a Google Sheet
 ```{r}
 
+mr_df_original_AD <- vroom(file = "/scratch/groups/ukbiobank/usr/alish/AD_MR/AD_outcome_stringent")
+
 # mr_df_original_AD <- AD_outcome_stringent
   # arrange(aesc(qvalue))
-
-mr_df_original_AD <- vroom(file = "/scratch/groups/ukbiobank/usr/alish/AD_MR/AD_outcome_stringent")
 
 # library(vroom)
 # library(openxlsx)
@@ -422,7 +429,9 @@ saveWorkbook(wb, file = paste0(path,"sensitivity/protein_AD_gsmr_results.xlsx"),
 # library(openxlsx)
 # library(cowplot)
 
-mr_df_original_AD <- AD_outcome_stringent
+mr_df_original_AD <- vroom(file = "/scratch/groups/ukbiobank/usr/alish/AD_MR/AD_outcome_stringent")
+
+# mr_df_original_AD <- AD_outcome_stringent
   # arrange(aesc(qvalue))
 
 mr_df_original_AD$file_name <- gsub(".gsmr", "", mr_df_original_AD$file_name)
@@ -561,10 +570,10 @@ saveWorkbook(wb, file = paste0(path,"sensitivity/protein_AD_sensitivity.xlsx"), 
 # Create a loop for getting all the GSMR data into a Google Sheet
 ```{r}
 
+mr_df_original_AD <- vroom("/scratch/groups/ukbiobank/usr/alish/AD_MR/AD_exposure_stringent")
+
 # mr_df_original_AD <- AD_exposure_stringent
   # arrange(aesc(qvalue))
-
-mr_df_original_AD <- vroom("/scratch/groups/ukbiobank/usr/alish/AD_MR/AD_exposure_stringent")
 
 # library(vroom)
 # library(openxlsx)
@@ -627,7 +636,9 @@ saveWorkbook(wb, file = paste0(path,"sensitivity/AD_protein_gsmr_results.xlsx"),
 #TwoSampleMR Sensitivity Analyses
 ```{r}
 
-mr_df_original_AD <- AD_exposure_stringent
+mr_df_original_AD <- vroom("/scratch/groups/ukbiobank/usr/alish/AD_MR/AD_exposure_stringent")
+
+# mr_df_original_AD <- AD_exposure_stringent
   # arrange(aesc(qvalue))
 
 mr_df_original_AD$file_name <- gsub(".gsmr", "", mr_df_original_AD$file_name)
