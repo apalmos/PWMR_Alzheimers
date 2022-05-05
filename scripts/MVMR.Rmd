@@ -40,6 +40,7 @@ library(vroom)
 
 source("/scratch/users/k1463257/packages/demo_AMD/summary_mvMR_SSS.R")
 source("/scratch/users/k1463257/packages/demo_AMD/summary_mvMR_BF.R")
+source("/scratch/groups/ukbiobank/usr/alish/AD_MR/MVMR/GSMR_read.R")
 
 ```
 
